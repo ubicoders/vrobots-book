@@ -3,3 +3,7 @@ authors = []
 language = "en"
 src = "src"
 title = "VRobots Book"
+
+
+[output.html]
+site-url = "/vrobots-book/"
