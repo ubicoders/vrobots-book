@@ -25,13 +25,13 @@ options:
   -h, --help            show this help message and exit
   -c CHANNELS, --channels CHANNELS
                         Number of subplots (channels) [default: 3]
-  -f FPS, --fps FPS     Qt redraw rate [default: 50]
+  -f FPS, --fps FPS     Qt redraw rate [default: 50]        # recommend to keep it default
   -b BUFFER_SECS, --buffer-secs BUFFER_SECS
                         Time window length in seconds [default: 6.0]
   -t TOPIC, --topic TOPIC
                         Zenoh topic to subscribe to [default: vr/0/rtg]
   --background BACKGROUND
-                        Plot background color [default: 'k']
+                        Plot background color [default: 'k'] # recommended colors 'w' or 'k'
 ```
 
 ## how to plot
