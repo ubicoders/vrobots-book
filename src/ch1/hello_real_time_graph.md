@@ -22,11 +22,16 @@ rtg-sub --help
 
 ```
 options:
-  -h, --help            show this help message and exit
+-h, --help            show this help message and exit
   -c CHANNELS, --channels CHANNELS
                         Number of subplots (channels) [default: 3]
+  -f FPS, --fps FPS     Qt redraw rate [default: 50]
+  -b BUFFER_SECS, --buffer-secs BUFFER_SECS
+                        Time window length in seconds [default: 6.0]
   -t TOPIC, --topic TOPIC
                         Zenoh topic to subscribe to [default: vr/0/rtg]
+  --background BACKGROUND
+                        Plot background color [default: 'k']
 ```
 
 ## how to plot
@@ -42,6 +47,7 @@ from ubicoders_vrobots_ipc.vrobot_node import VRobotNodeBase, vrobot_client_runn
 # add this line
 from ubicoders_vrobots_ipc.rtg_pub import RTGPub 
 #===================================
+
 class VRobotNode(VRobotNodeBase):
     def __init__(self, sysId:int = 0):
         super().__init__(sysId)
