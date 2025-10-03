@@ -40,7 +40,7 @@ The main script needs to publish the realtime values to plot. Keep the terminal 
 from ubicoders_vrobots_ipc.vrobot_node import VRobotNodeBase, vrobot_client_runner
 #===================================
 # add this line
-from .rtg_pub import RTGPub 
+from ubicoders_vrobots_ipc.rtg_pub import RTGPub 
 #===================================
 class VRobotNode(VRobotNodeBase):
     def __init__(self, sysId:int = 0):

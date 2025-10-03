@@ -1,6 +1,5 @@
 # hello-service
 
-
 ## intro
 One can reuqest a serivce to the sim. For instance, the script below is to create a new virtual robot in the sim.
 
