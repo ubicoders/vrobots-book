@@ -1,8 +1,8 @@
 # Summary
 
 - [Getting started](./ch1/intro.md)
-    - [concept](./ch1/concept.md)
     - [installation](./ch1/install.md)
+    - [concept](./ch1/concept.md)    
     - [hello-world](./ch1/hello_world.md)
     - [hello-states](./ch1/hello_states.md)
     - [hello-image](./ch1/hello_image.md)
