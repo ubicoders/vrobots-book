@@ -22,7 +22,7 @@ rtg-sub --help
 
 ```
 options:
--h, --help            show this help message and exit
+  -h, --help            show this help message and exit
   -c CHANNELS, --channels CHANNELS
                         Number of subplots (channels) [default: 3]
   -f FPS, --fps FPS     Qt redraw rate [default: 50]
