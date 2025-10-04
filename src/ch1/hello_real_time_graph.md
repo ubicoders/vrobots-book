@@ -42,10 +42,10 @@ The main script needs to publish the realtime values to plot. Keep the terminal 
 *updated "hello_states.py"*
 
 ``` py
-from ubicoders_vrobots_ipc.vrobot_node import VRobotNodeBase, vrobot_client_runner
+from ubicoders_vrobots_ipc import VRobotNodeBase, vrobot_client_runner
 #===================================
 # add this line
-from ubicoders_vrobots_ipc.rtg_pub import RTGPub 
+from ubicoders_vrobots_ipc import RTGPub 
 #===================================
 
 class VRobotNode(VRobotNodeBase):
@@ -71,4 +71,5 @@ class VRobotNode(VRobotNodeBase):
 
 if __name__ == "__main__":
     vrobot_client_runner([VRobotNode(sysId=0)])
+
 ```

@@ -20,5 +20,7 @@ Prebuilt packages are available at: [ubicoders.com]()
 
 ## 🐍 Python Client
 Install the Python IPC client:
+
 ```bash
 pip install ubicoders-vrobots-ipc
+```

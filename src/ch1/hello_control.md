@@ -4,10 +4,7 @@
 hello_control.py
 
 ```py
-from ubicoders_vrobots_ipc.vrobot_node import VRobotNodeBase, vrobot_client_runner
-from ubicoders_vrobots_msgs.C000_commands_generated import CommandMsgT
-from ubicoders_vrobots_msgs import VROBOTS_CMDS
-import time
+from ubicoders_vrobots_ipc import VRobotNodeBase, vrobot_client_runner
 
 class VRobotNode(VRobotNodeBase):
     def __init__(self, sysId:int = 0):
@@ -28,15 +25,12 @@ class VRobotNode(VRobotNodeBase):
             elapsed_sec = (ts - self.first_ts) / 1000.0 # in seconds
             print(f"State t={elapsed_sec} pos=({pos.x:.3f},{pos.y:.2f},{pos.z:.2f})")
 
-            # ======================================================
             # Do some COOL control here and publish
-            cool_control_result = [1600, 1600, 1600, 1600]
+            cool_control_result = [1501, 1501, 1501, 1501]
             self.update_cmd_multirotor(cool_control_result)
-            # ======================================================
-
+ 
     # ======================================================
 
 if __name__ == "__main__":
     vrobot_client_runner([VRobotNode(sysId=0)])
-
 ```
