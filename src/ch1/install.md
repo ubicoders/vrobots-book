@@ -24,10 +24,10 @@ Just run "virtual_robots.exe"
 ## Setup - Ubuntu
 ```
 sudo apt install xdg-utils -y
-sudo chmod +x ./vrobots.x86_64
-./vrobots.x86_64
+sudo chmod +x ./virtual_robots.x86_64
+./  .x86_64
 or
-# run "vrobots.x86_64" by double clicking it.
+# run "virtual_robots.x86_64" by double clicking it.
 ```
 
 ## Setup - WSL
@@ -48,12 +48,12 @@ vkcube
 ```
 
 ```
-sudo chmod +x ./vrobots.x86_64
+sudo chmod +x ./virtual_robots.x86_64
 ```
 
 Run
 ```
-nohup ./vrobots.x86_64 -force-vulkan > output.log 2>&1 &
+nohup ./virtual_robots.x86_64 -force-vulkan > output.log 2>&1 &
 ```
 
 
