@@ -37,12 +37,33 @@ or
 
 Install Vulkan (WSL graphics bridge)
 
-```
+install_wsl_graphics.bash
+```bash
+#!/bin/bash
+# 1. Install necessary drivers and diagnostic tools
 sudo apt update
-sudo apt install xdg-utils -y
-sudo apt install mesa-vulkan-drivers vulkan-tools -y
-vulkaninfo | grep "Vulkan Instance Version"
-vkcube
+sudo apt install -y xdg-utils mesa-vulkan-drivers vulkan-tools mesa-utils
+
+# 2. Add GPU bridge variables to .bashrc for persistence
+# We use GALLIUM_DRIVER to force the D3D12 bridge (Windows GPU)
+# and VK_ICD_FILENAMES to ensure Vulkan doesn't default to the CPU (llvmpipe)
+if ! grep -q "GALLIUM_DRIVER=d3d12" ~/.bashrc; then
+  echo 'export GALLIUM_DRIVER=d3d12' >> ~/.bashrc
+  echo 'export MESA_D3D12_DEFAULT_ADAPTER_NAME=NVIDIA' >> ~/.bashrc
+  echo 'export VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/d3d12_icd.x86_64.json' >> ~/.bashrc
+fi
+
+# 3. Reload environment
+source ~/.bashrc
+
+# 4. Verify the setup
+echo "--- Checking OpenGL (Should show NVIDIA 1080 Ti) ---"
+glxinfo -B | grep -E "Device|Accelerated"
+
+echo "--- Checking Vulkan (Should show Selected GPU 0: D3D12) ---"
+vulkaninfo | grep "Selected GPU"
+
+
 ```
 
 Check Vulkan
@@ -52,14 +73,32 @@ vulkaninfo | grep "Vulkan Instance Version"
 vkcube
 ```
 
-```
-sudo chmod +x ./virtual_robots.x86_64
-```
-
 Run
 
-```
+run_vrobots.bash
+
+```bash
+#!/bin/bash
+# Ensure the binary is executable
+chmod +x ./virtual_robots.x86_64
+
+# Verification check: Stop if we are still on CPU (llvmpipe)
+RENDERER=$(glxinfo -B | grep "Device" | grep -o "llvmpipe")
+if [ "$RENDERER" == "llvmpipe" ]; then
+    echo "ERROR: GPU not detected. Still using CPU (llvmpipe). Run Script 1 first."
+    exit 1
+fi
+
+echo "GPU Detected: Launching simulation with Vulkan..."
+
+# Run the simulation in the background
+# -force-vulkan: Tells Unity to use the Vulkan API
+# VK_ICD_FILENAMES: Double-check the Vulkan path for this specific process
+export VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/d3d12_icd.x86_64.json
+
 nohup ./virtual_robots.x86_64 -force-vulkan > output.log 2>&1 &
+
+echo "Simulation started. Check progress with: tail -f output.log"
 ```
 
 ## 🐍 Python Client (all platforms)
