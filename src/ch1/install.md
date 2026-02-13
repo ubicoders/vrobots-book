@@ -37,7 +37,13 @@ or
 
 Install Vulkan (WSL graphics bridge)
 
+
+```
+bash install_wsl_graphics.bash && source ~/.bashrc
+```
+
 install_wsl_graphics.bash
+
 ```bash
 #!/bin/bash
 # 1. Install necessary drivers and diagnostic tools
@@ -83,26 +89,10 @@ run_vrobots.bash
 
 ```bash
 #!/bin/bash
-# Ensure the binary is executable
-chmod +x ./virtual_robots.x86_64
-
-# Verification check: Stop if we are still on CPU (llvmpipe)
-RENDERER=$(glxinfo -B | grep "Device" | grep -o "llvmpipe")
-if [ "$RENDERER" == "llvmpipe" ]; then
-    echo "ERROR: GPU not detected. Still using CPU (llvmpipe). Run Script 1 first."
-    exit 1
-fi
-
-echo "GPU Detected: Launching simulation with Vulkan..."
-
-# Run the simulation in the background
-# -force-vulkan: Tells Unity to use the Vulkan API
-# VK_ICD_FILENAMES: Double-check the Vulkan path for this specific process
-export VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/d3d12_icd.x86_64.json
-
+sudo chmod +x ./virtual_robots.x86_64
+export LD_LIBRARY_PATH=$(echo "$LD_LIBRARY_PATH" | sed 's|:/opt/zenoh-c/lib||; s|/opt/zenoh-c/lib:||; s|/opt/zenoh-c/lib||')
 nohup ./virtual_robots.x86_64 -force-vulkan > output.log 2>&1 &
 
-echo "Simulation started. Check progress with: tail -f output.log"
 ```
 
 ## 🐍 Python Client (all platforms)
