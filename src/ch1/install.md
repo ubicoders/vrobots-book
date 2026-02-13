@@ -47,9 +47,9 @@ install_wsl_graphics.bash
 ```bash
 #!/bin/bash
 # 1. Install necessary drivers and diagnostic tools
-sudo apt update
+sudo apt-get update
 sudo apt install xdg-utils -y
-sudo apt install mesa-vulkan-drivers vulkan-tools -y
+sudo apt install mesa-utils mesa-vulkan-drivers vulkan-tools -y
 
 
 # 2. Add GPU bridge variables to .bashrc for persistence
@@ -68,11 +68,10 @@ echo "--- Checking OpenGL  ---"
 glxinfo -B | grep -E "Device|Accelerated"
 
 echo "--- Checking Vulkan  ---"
-vulkaninfo | grep "Selected GPU"
-
-
 vulkaninfo | grep "Vulkan Instance Version"
 vkcube
+
+echo "run source ~/.bashrc to apply the changes, then you can run the virtual robots with GPU acceleration."
 
 ```
 
