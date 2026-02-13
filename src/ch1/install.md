@@ -42,7 +42,9 @@ install_wsl_graphics.bash
 #!/bin/bash
 # 1. Install necessary drivers and diagnostic tools
 sudo apt update
-sudo apt install -y xdg-utils mesa-vulkan-drivers vulkan-tools mesa-utils
+sudo apt install xdg-utils -y
+sudo apt install mesa-vulkan-drivers vulkan-tools -y
+
 
 # 2. Add GPU bridge variables to .bashrc for persistence
 # We use GALLIUM_DRIVER to force the D3D12 bridge (Windows GPU)
@@ -50,7 +52,6 @@ sudo apt install -y xdg-utils mesa-vulkan-drivers vulkan-tools mesa-utils
 if ! grep -q "GALLIUM_DRIVER=d3d12" ~/.bashrc; then
   echo 'export GALLIUM_DRIVER=d3d12' >> ~/.bashrc
   echo 'export MESA_D3D12_DEFAULT_ADAPTER_NAME=NVIDIA' >> ~/.bashrc
-  echo 'export VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/d3d12_icd.x86_64.json' >> ~/.bashrc
 fi
 
 # 3. Reload environment
@@ -63,6 +64,9 @@ glxinfo -B | grep -E "Device|Accelerated"
 echo "--- Checking Vulkan  ---"
 vulkaninfo | grep "Selected GPU"
 
+
+vulkaninfo | grep "Vulkan Instance Version"
+vkcube
 
 ```
 
