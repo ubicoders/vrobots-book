@@ -57,10 +57,10 @@ fi
 source ~/.bashrc
 
 # 4. Verify the setup
-echo "--- Checking OpenGL (Should show NVIDIA 1080 Ti) ---"
+echo "--- Checking OpenGL  ---"
 glxinfo -B | grep -E "Device|Accelerated"
 
-echo "--- Checking Vulkan (Should show Selected GPU 0: D3D12) ---"
+echo "--- Checking Vulkan  ---"
 vulkaninfo | grep "Selected GPU"
 
 
