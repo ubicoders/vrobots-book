@@ -15,6 +15,7 @@
         - [Command List](./ch2/cmd/cmd_list.md)
     - [Publishing rtg data](./ch2/rtg.md)
     - [Publishing custom data](./ch2/custom.md)
+    - [Publishing to rerun.io](./ch2/rerun.md)
 - [Subscribing robot data](./ch3/intro.md)
     - [Subscribing states](./ch3/states.md)
     - [Subscribing images](./ch3/images.md)
