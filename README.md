@@ -80,5 +80,6 @@ Tags mark book releases against the simulator version they document.
 
 | Tag | Documents |
 |---|---|
+| `v3.0.1` | simulator v3.0.0, SDK 0.1.4; pip-first installation |
 | `v3.0.0` | simulator v3.0.0, SDK 0.1.4 |
 | `v2.0` | the previous edition |
