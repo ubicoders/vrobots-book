@@ -16,14 +16,21 @@ timestamps, and the same stable error codes in
 
 ## What you need
 
+The SDK itself is one pip command, which installs the compiled core, the `vrsdk` module and
+the `vrobots` diagnostic command:
+
+```sh
+pip install ubicoders-vrsdk
+```
+
 | Requirement | Notes |
 |---|---|
-| Rust 1.89 or newer | The crate is edition 2024. |
-| The repository, cloned with its submodule | `git clone --recurse-submodules`. The `vrobots_msgs` submodule ships the generated Rust, so no `flatc` or `protoc` is needed; the build fails without it and says so. |
-| The Unity simulator, in Play mode | Required for anything that talks to a robot. `cargo test` runs without it, against recorded fixtures. |
+| The `ubicoders-vrsdk` wheel | The whole SDK. No toolchain, clone or submodule needed. |
+| The Unity simulator, in Play mode | Required for anything that talks to a robot. |
+| Rust 1.89 or newer | Only to build from source, for the Rust and C++ surfaces. The crate is edition 2024. |
 
 [Installing the SDK and the simulator](ch01-getting-started/01-install.md) covers all three
-in order.
+in order, and puts the source build in its own section at the end.
 
 ## The one idea to internalise first
 
@@ -139,14 +146,14 @@ the file), and is mirrored one for one in Python and C++ under `examples/python/
 Run one by its bin name, or by the equivalent name in the language you are using:
 
 ```sh
+python examples/python/ex01_hello_states.py
 cargo run -p vrobots-examples --bin ex01_hello_states
 ./target/cpp-build/ex01_hello_states
-python examples/python/ex01_hello_states.py
 ```
 
-The C++ line assumes the build in
+The Python line needs only the wheel. The Rust and C++ lines assume the source build in
 [Installing the SDK and the simulator](ch01-getting-started/01-install.md); on Windows the
-binary is `target\cpp-build\Release\ex01_hello_states.exe`.
+C++ binary is `target\cpp-build\Release\ex01_hello_states.exe`.
 
 Every code block in this book is copied from one of those files or from a signature in the
 SDK source, so anything you read here compiles as written.

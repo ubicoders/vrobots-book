@@ -3,7 +3,7 @@
 Use the vrobots command to prove the simulator is talking before you write any code.
 
 ```sh
-cargo run -p vrobots-sdk --bin vrobots -- topic list
+vrobots topic list
 ```
 
 ## What a healthy scene looks like
@@ -84,7 +84,7 @@ Once a topic is listed, watch that one key. The argument is an exact key express
 are no wildcards.
 
 ```sh
-cargo run -p vrobots-sdk --bin vrobots -- topic hz vrobots/1/z/state
+vrobots topic hz vrobots/1/z/state
 ```
 
 ```text

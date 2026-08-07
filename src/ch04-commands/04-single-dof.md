@@ -121,7 +121,7 @@ The actuator block carries the plant's own arithmetic rather than an echo of you
 ## The cart pole
 
 A cart pole is scene-authored rather than creatable, so it takes a `sys_id` argument: find
-the live one with `cargo run -p vrobots-sdk --bin vrobots -- topic list`. Ids are allocated
+the live one with `vrobots topic list`. Ids are allocated
 at scene load and keep incrementing, so no constant in an example could stay true.
 
 One actuator, a force on the cart, and two things to control with it. That is what

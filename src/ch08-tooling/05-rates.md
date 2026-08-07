@@ -3,7 +3,7 @@
 You watch one topic for a window and get its whole arrival distribution, which is the part an average hides.
 
 ```sh
-cargo run -p vrobots-sdk --bin vrobots -- topic hz vrobots/1/z/state -w 5
+vrobots topic hz vrobots/1/z/state -w 5
 ```
 
 When a control loop stutters, the mean rate is almost always fine. The two numbers

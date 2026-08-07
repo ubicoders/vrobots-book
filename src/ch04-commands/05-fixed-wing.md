@@ -13,8 +13,7 @@ python examples/python/ex33_fw_est_source.py <sys_id>
 ```
 
 The Global Hawk is scene-authored and lives in the IMU scene, not the sandbox, so both
-examples take the live `sys_id` as an argument. Find it with `cargo run -p vrobots-sdk
---bin vrobots -- topic list`.
+examples take the live `sys_id` as an argument. Find it with `vrobots topic list`.
 
 ## Two modes, and what reset does to them
 
