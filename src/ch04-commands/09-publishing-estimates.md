@@ -216,6 +216,6 @@ is being asked for the wrong thing.
 > **Note.** Five degrees is deliberately small: the altitude assist is clamped at ten, so a
 > lie inside the clamp settles the aircraft lower instead of departing.
 
-**Next:** [Cameras and images](../ch05-cameras/00-intro.md)
+**Next:** [The showcase attitude estimator](10-showcase-estimator.md)
 
-**See also:** [Fixed wing control](05-fixed-wing.md), [Truth, measured and believed](../ch03-reading-state/01-truth-measured-believed.md), [Rotation conversions](../ch02-concepts/08-rotation-conversions.md)
+**See also:** [Fixed wing control](05-fixed-wing.md), [Truth, measured and believed](../ch03-reading-state/01-truth-measured-believed.md), [Rotation conversions](../ch02-concepts/08-rotation-conversions.md), [The showcase attitude estimator](10-showcase-estimator.md)

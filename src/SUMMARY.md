@@ -51,6 +51,7 @@
     - [Commands nothing acts on](ch04-commands/07-ignored-commands.md)
     - [Reading someone else's commands](ch04-commands/08-reading-commands.md)
     - [Publishing estimates](ch04-commands/09-publishing-estimates.md)
+    - [The showcase attitude estimator](ch04-commands/10-showcase-estimator.md)
 
 - [Cameras and images](ch05-cameras/00-intro.md)
     - [Mount, open and unmount](ch05-cameras/01-mount-open-unmount.md)
