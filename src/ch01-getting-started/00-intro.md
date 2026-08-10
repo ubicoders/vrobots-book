@@ -74,7 +74,7 @@ pins this build speaks.
 
 Working through the eight pages of this chapter, in order, leaves you with:
 
-- The SDK built and the simulator running, on Windows, Ubuntu or WSL.
+- The SDK installed and the simulator running, on Windows, Ubuntu or WSL.
 - Proof, from the `vrobots` command line tool, that the simulator is publishing and under
   which system id.
 - A program that reads a multirotor's position at a rate you choose.

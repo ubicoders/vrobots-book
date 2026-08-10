@@ -10,8 +10,8 @@ playing all look the same from inside your loop.
 Two commands answer most of it before you read any further:
 
 ```sh
-vrobots topic list
-vrobots --version
+cargo run -p vrobots-sdk --bin vrobots -- topic list
+cargo run -p vrobots-sdk --bin vrobots -- --version
 ```
 
 ## Symptoms and causes

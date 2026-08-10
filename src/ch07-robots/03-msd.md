@@ -98,10 +98,12 @@ simulator log line and still acknowledged `ok`.
 
 ## Cameras
 
-Nothing is camera-specific to this robot type, and a created robot is not the scene's, so
-what it ships with is whatever the prefab carries. The test scene ships `front_left` and
-`front_right` at 720p rgba8 on its scene robots, and you can mount cameras here with
-`mount_camera` regardless. See [Cameras and images](../ch05-cameras/00-intro.md).
+Nothing is camera-specific to this robot type. Where a robot carries the default pair,
+`front_left` and `front_right` at 720p rgba8, `open_camera` attaches to either without
+changing anything; this one may carry none, and a robot you created yourself carries
+whatever its prefab does, so `mount_camera` may be the only way to get pixels off it.
+`vrobots topic list` is the authority. See
+[Cameras and images](../ch05-cameras/00-intro.md).
 <!-- VERIFY: whether a created Msd comes up with any default cameras mounted. -->
 
 ## Known quirks

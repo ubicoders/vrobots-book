@@ -25,8 +25,9 @@ dependency at all.
 
 ## The loop
 
-Setup is the same `mount_camera` as [Hello image](../ch01-getting-started/06-hello-image.md),
-followed by one `named_window`. The loop is where the two lessons of this page live. From
+Setup is the same `open_camera` on `front_left` as
+[Hello image](../ch01-getting-started/06-hello-image.md), followed by one `named_window`.
+Nothing is mounted, so nothing has to be torn down. The loop is where the two lessons of this page live. From
 `examples/rust/src/bin/ex34_camera_view.rs`:
 
 ```rust
@@ -48,18 +49,18 @@ followed by one `named_window`. The loop is where the two lessons of this page l
 
         // The pixels are already row-major, top-down and tightly packed, so this
         // is a straight copy into a Mat of the same shape.
-        let mut rgb = Mat::new_rows_cols_with_default(
+        let mut rgba = Mat::new_rows_cols_with_default(
             frame.height as i32,
             frame.width as i32,
-            CV_8UC3,
+            CV_8UC4,
             Scalar::all(0.0),
         )?;
-        rgb.data_bytes_mut()?.copy_from_slice(&frame.data);
+        rgba.data_bytes_mut()?.copy_from_slice(&frame.data);
 
-        // The SDK never does this for you: RGB is what Unity rendered, BGR is
+        // The SDK never does this for you: RGBA is what Unity rendered, BGR is
         // what OpenCV displays.
         let mut bgr = Mat::default();
-        imgproc::cvt_color_def(&rgb, &mut bgr, imgproc::COLOR_RGB2BGR)?;
+        imgproc::cvt_color_def(&rgba, &mut bgr, imgproc::COLOR_RGBA2BGR)?;
 
         highgui::imshow(WINDOW, &bgr)?;
         if quit_requested()? {
@@ -99,14 +100,14 @@ followed by one `named_window`. The loop is where the two lessons of this page l
 
             // A header over the frame's own bytes -- no copy. Row-major,
             // top-down and tightly packed is exactly what cv::Mat wants.
-            const cv::Mat rgb(static_cast<int>(frame->height()), static_cast<int>(frame->width()),
-                              CV_8UC3, const_cast<std::uint8_t*>(frame->data.data()),
-                              static_cast<std::size_t>(frame->step()));
+            const cv::Mat rgba(static_cast<int>(frame->height()), static_cast<int>(frame->width()),
+                               CV_8UC4, const_cast<std::uint8_t*>(frame->data.data()),
+                               static_cast<std::size_t>(frame->step()));
 
-            // The SDK never does this for you: RGB is what Unity rendered, BGR
+            // The SDK never does this for you: RGBA is what Unity rendered, BGR
             // is what OpenCV displays.
             cv::Mat bgr;
-            cv::cvtColor(rgb, bgr, cv::COLOR_RGB2BGR);
+            cv::cvtColor(rgba, bgr, cv::COLOR_RGBA2BGR);
 
             cv::imshow(WINDOW, bgr);
             if (quit_requested()) {
@@ -142,9 +143,9 @@ followed by one `named_window`. The loop is where the two lessons of this page l
             continue
         seen += 1
 
-        # frame.image is (h, w, c) uint8, top-down, RGB. The SDK never converts
-        # colour for you: RGB is what Unity rendered, BGR is what OpenCV shows.
-        bgr = cv2.cvtColor(frame.image, cv2.COLOR_RGB2BGR)
+        # frame.image is (h, w, 4) uint8, top-down, RGBA. The SDK never converts
+        # colour for you: RGBA is what Unity rendered, BGR is what OpenCV shows.
+        bgr = cv2.cvtColor(frame.image, cv2.COLOR_RGBA2BGR)
 
         cv2.imshow(WINDOW, bgr)
         if quit_requested():
@@ -161,7 +162,7 @@ around the frame's own bytes and copies nothing, Rust copies into an owned `Mat`
 Python passes the numpy view as it stands. The C++ header is valid only while that `Frame`
 is alive, which is why it is built inside the loop body and never stored.
 
-## RGB in, BGR out
+## RGBA in, BGR out
 
 The SDK normalises geometry and nothing else. Rows arrive top-down, `step` is
 `width * bytes_per_pixel` with no padding, and channels are the renderer's own order, so
@@ -171,12 +172,13 @@ conversion, written at the call site that wants BGR.
 Skip that conversion and the picture still appears, with the sky orange and the desert
 blue. That is the fastest way to recognise the mistake.
 
-The example mounts `rgb8`, so the type is fixed. The other two formats differ only here:
+The example opens `front_left`, which is `rgba8`, so the type is fixed. The other two
+formats differ only here:
 
 | Format | Mat type | Conversion for display |
 |---|---|---|
+| `rgba8` | `CV_8UC4` | `COLOR_RGBA2BGR`, what this example uses |
 | `rgb8` | `CV_8UC3` | `COLOR_RGB2BGR` |
-| `rgba8` | `CV_8UC4` | `COLOR_RGBA2BGR` |
 | `mono8` | `CV_8UC1` | none, one channel has no order |
 
 ## One imshow per rendered frame
@@ -192,30 +194,30 @@ files does both in one call. `imshow` on its own queues an image and paints noth
 the 1 ms argument is a maximum rather than a delay: the call returns as soon as the window
 has been serviced.
 
-## Quit with the key, not with Ctrl-C
+## Quitting
 
 The run prints one line on the way in and one on the way out:
 
 ```text
-showing vrobots/1/i/cam/view/720p_rgb8 -- press q or Esc to quit
-unmounted view; showed 412 frame(s), received=412 decode_errors=0 seq_gaps=0
+showing vrobots/1/i/cam/front_left/720p_rgba8 -- press q or Esc to quit
+showed 412 frame(s), received=412 decode_errors=0 seq_gaps=0
 ```
 
 <!-- VERIFY: the frame counts above are illustrative; they depend on how long the window is left open. -->
 
-Pressing `q` or Esc breaks the loop, which is what lets the cleanup run:
+Pressing `q` or Esc breaks the loop, and the only thing left to close is the window:
 
 ```rust
     // ===== cleanup =====
+    // Only ours: the window. Dropping the stream ends this subscription and
+    // nothing else -- front_left keeps rendering for everyone.
     highgui::destroy_all_windows()?;
-    // Leave the sim as we found it: this removes `view` by name, so the cameras
-    // the scene mounted are exactly as they were before the run.
-    robot.unmount_camera(CAMERA)?;
 ```
 
-> **Gotcha.** Ctrl-C skips all of that. The camera `view` stays mounted on a robot that
-> outlives your process, and it keeps rendering and publishing until something unmounts it
-> by name or the simulator restarts. Running the example again takes it back down.
+Ctrl-C is just as safe: this example never mounted anything, so there is no camera left
+behind on a robot that outlives the process. An example that mounts one -- `ex17_camera_pose`
+is the only one here -- does have that deadline, and page
+[Mount, open and unmount](01-mount-open-unmount.md) spells it out.
 
 `showed` counts what reached the window and `received` counts what the reader thread got,
 so a gap between them means frames arrived while the loop was inside `cvtColor` or

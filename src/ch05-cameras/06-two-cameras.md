@@ -8,40 +8,43 @@ cargo run -p vrobots-examples --bin ex16_two_cameras
 python examples/python/ex16_two_cameras.py
 ```
 
-A stereo pair, or a forward camera and a downward one. Each `mount_camera` call adds to
-this handle's list and returns its own `CameraStream`, and each stream owns its own reader
-thread, its own sequence numbers and its own freshness.
+The stereo pair every vrobot already has: **`front_left` and `front_right`, both at 720p
+rgba8**. Each `open_camera` call returns its own `CameraStream`, and each stream owns its
+own reader thread, its own sequence numbers and its own freshness.
 
-## Mounting both
+## Opening both
 
-Both cameras mount at the same resolution, because resolution is one knob for the whole
-robot. Asking the second one for a different resolution is refused with
-`VrError::InvalidArgument` rather than restarting the first stream under a new name behind
-your back. Format is per camera; only resolution is shared.
+Both streams are at the same resolution, and could not be anything else: resolution is one
+knob for the whole robot. Were you mounting instead, asking for a second resolution while
+this handle holds a stream at another is refused with `VrError::InvalidArgument` rather than
+restarting the first stream under a new name behind your back. Format is per camera; only
+resolution is shared.
 
 From `examples/rust/src/bin/ex16_two_cameras.rs`:
 
 ```rust
-let left = robot.mount_camera(LEFT, RESOLUTION, FORMAT)?;
-let right = robot.mount_camera(RIGHT, RESOLUTION, FORMAT)?;
+// Two subscriptions, no mutation: both cameras are already on the robot.
+let left = robot.open_camera(LEFT, RESOLUTION, FORMAT)?;
+let right = robot.open_camera(RIGHT, RESOLUTION, FORMAT)?;
 println!("left : {}", left.service_name());
 println!("right: {}", right.service_name());
-println!("mounted by this handle: {:?}", robot.mounted_cameras());
+println!(
+    "mounted by this handle: {:?}  <- neither is ours",
+    robot.mounted_cameras()
+);
 ```
 
 <details>
 <summary>The same in C++ (<code>examples/cpp/ex16_two_cameras.cpp</code>)</summary>
 
 ```cpp
-        vrsdk::CameraStream left = robot.mount_camera(LEFT, RESOLUTION, FORMAT);
-        vrsdk::CameraStream right = robot.mount_camera(RIGHT, RESOLUTION, FORMAT);
+        // Two subscriptions, no mutation: both cameras are already on the robot.
+        vrsdk::CameraStream left = robot.open_camera(LEFT, RESOLUTION, FORMAT);
+        vrsdk::CameraStream right = robot.open_camera(RIGHT, RESOLUTION, FORMAT);
         std::printf("left : %s\n", left.service_name().c_str());
         std::printf("right: %s\n", right.service_name().c_str());
-        std::printf("mounted by this handle:");
-        for (const std::array<std::string, 3>& spec : robot.mounted_cameras()) {
-            std::printf(" %s(%s_%s)", spec[0].c_str(), spec[1].c_str(), spec[2].c_str());
-        }
-        std::printf("\n");
+        std::printf("mounted by this handle: %zu  <- neither is ours\n",
+                    robot.mounted_cameras().size());
 ```
 
 </details>
@@ -50,31 +53,31 @@ println!("mounted by this handle: {:?}", robot.mounted_cameras());
 <summary>The same in Python (<code>examples/python/ex16_two_cameras.py</code>)</summary>
 
 ```python
-    left = mr.mount_camera(LEFT, RESOLUTION, FORMAT)
-    right = mr.mount_camera(RIGHT, RESOLUTION, FORMAT)
+    # Two subscriptions, no mutation: both cameras are already on the robot.
+    left = mr.open_camera(LEFT, RESOLUTION, FORMAT)
+    right = mr.open_camera(RIGHT, RESOLUTION, FORMAT)
     print(f"left : {left.service_name}")
     print(f"right: {right.service_name}")
-    print(f"mounted by this handle: {[str(c) for c in mr.mounted_cameras()]}")
+    print(f"mounted by this handle: {mr.mounted_cameras()}  <- neither is ours")
 ```
 
 </details>
 
-Only the printing of the mounted list differs. `service_name` is a property in Python and a
-method in the other two, and C++ has no `CameraSpec` type, so `mounted_cameras()` there hands
-back a `std::array<std::string, 3>` of name, resolution and format that the loop formats
-itself.
+Only the printing differs. `service_name` is a property in Python and a method in the other
+two, and C++ has no `CameraSpec` type, so `mounted_cameras()` there hands back a
+`std::array<std::string, 3>` of name, resolution and format, printed here as a count.
 
-Two service names and the handle's own list, in mount order:
+Two service names, and an empty owned list -- which is the point:
 
 ```text
-left : vrobots/1/i/cam/left/720p_rgb8
-right: vrobots/1/i/cam/right/720p_rgb8
-mounted by this handle: [CameraSpec { name: "left", resolution: P720, format: Rgb8 }, CameraSpec { name: "right", resolution: P720, format: Rgb8 }]
+left : vrobots/1/i/cam/front_left/720p_rgba8
+right: vrobots/1/i/cam/front_right/720p_rgba8
+mounted by this handle: []  <- neither is ours
 ```
 
-Each call sends only its own camera, so mounting `right` cannot disturb `left`, and neither
-disturbs the scene's `front_left` and `front_right`, which keep streaming throughout. Four
-cameras are on the robot by the end of setup, two of them yours.
+Neither call changed anything in the simulator, so two of these programs can run at once on
+the same pair without either noticing, and a third can be mounting a camera of its own
+alongside them.
 
 ## Two consumers in one loop
 
@@ -234,51 +237,17 @@ itself.
 state at the instant of capture rather than the newest one, keep a short ring of recent
 snapshots and pick the one whose `t_ns` is closest to the frame's.
 
-## Cleaning up
+## Nothing to clean up
 
-Each unmount removes exactly the name it is given, so the order does not matter and the
-second call cannot undo the first.
+There is no unmount at the end of this example, for either stream. This handle created
+neither camera, so it has nothing to remove: letting the streams go ends two subscriptions,
+and both cameras keep rendering and publishing for everyone else.
 
-```rust
-robot.unmount_camera(LEFT)?;
-robot.unmount_camera(RIGHT)?;
-println!(
-    "unmounted both; mounted list is now {:?}",
-    robot.mounted_cameras()
-);
-```
-
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex16_two_cameras.cpp</code>)</summary>
-
-```cpp
-        robot.unmount_camera(LEFT);
-        robot.unmount_camera(RIGHT);
-        std::printf("unmounted both; mounted list is now %zu entries\n",
-                    robot.mounted_cameras().size());
-```
-
-</details>
-
-<details>
-<summary>The same in Python (<code>examples/python/ex16_two_cameras.py</code>)</summary>
-
-```python
-    mr.unmount_camera(LEFT)
-    mr.unmount_camera(RIGHT)
-    print(f"unmounted both; mounted list is now {mr.mounted_cameras()}")
-```
-
-</details>
-
-The two unmounts are identical. C++ prints the size of the list rather than the list, because
-its entries are `std::array<std::string, 3>` with no formatting of their own.
-
-The handle's list is empty afterwards, and the scene's own cameras are untouched:
-
-```text
-unmounted both; mounted list is now []
-```
+That is also why `unmount_camera(LEFT)` here would be refused rather than obeyed -- it
+removes only what `mount_camera` added, and page
+[Mount, open and unmount](01-mount-open-unmount.md) shows the refusal in full. A program
+that does mount a pair of its own unmounts each by name, in either order, since each call
+removes exactly the name it is given and cannot undo the other.
 
 **Next:** [Saving a frame](07-saving-frames.md)
 

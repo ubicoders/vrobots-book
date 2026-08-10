@@ -3,13 +3,11 @@
 Every subcommand and flag, and how to read the output column by column.
 
 ```sh
-vrobots topic list
+cargo run -p vrobots-sdk --bin vrobots -- topic list
 ```
 
-`vrobots` is a standalone binary. `pip install ubicoders-vrsdk` installs it as a console
-entry point, and a source build produces it as `cargo run -p vrobots-sdk --bin vrobots --`.
-It needs no dev tooling, no configuration and no robot handle, and it is the first thing to
-run when a program is silent.
+The SDK builds a binary called `vrobots`. It needs no dev tooling, no configuration
+and no robot handle, and it is the first thing to run when a program is silent.
 
 ## Global flags
 
@@ -85,7 +83,7 @@ single rate across several interleaved topics is not a rate, and the SDK refuses
 with `InvalidArgument` before opening a session.
 
 ```sh
-vrobots topic hz vrobots/1/z/state -w 5
+cargo run -p vrobots-sdk --bin vrobots -- topic hz vrobots/1/z/state -w 5
 ```
 
 | Argument | Default | Notes |

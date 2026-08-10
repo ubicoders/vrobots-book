@@ -3,9 +3,9 @@
 The resolutions and pixel formats on offer, and the one setting that is robot-wide.
 
 ```sh
-cargo run -p vrobots-examples --bin ex15_camera_mono
-./target/cpp-build/ex15_camera_mono
-python examples/python/ex15_camera_mono.py
+cargo run -p vrobots-examples --bin ex15_camera_formats
+./target/cpp-build/ex15_camera_formats
+python examples/python/ex15_camera_formats.py
 ```
 
 ## Resolution
@@ -36,44 +36,44 @@ to resubscribe under the new name.
 Resolution times format is the whole story, since the pixels are tightly packed and there
 is no compression anywhere on the path.
 
-| Stream | Bytes per frame |
-|---|---|
-| 720p rgba8, the scene default | 1280 x 720 x 4 = 3 686 400 |
-| 720p rgb8, `ex03_hello_image` | 1280 x 720 x 3 = 2 764 800 |
-| 360p mono8, `ex15_camera_mono` | 640 x 360 x 1 = 230 400 |
+| resolution | mono8 (1 B) | rgb8 (3 B) | rgba8 (4 B) |
+|---|---|---|---|
+| 360p | 230 400 | 691 200 | 921 600 |
+| 720p | 921 600 | 2 764 800 | **3 686 400**, what every vrobot ships |
+| 1080p | 2 073 600 | 6 220 800 | 8 294 400 |
 
-`CameraSpec::data_size()` returns that number for any combination. Sixteen times less data
-per frame is worth having for anything that needs only luminance and geometry: optical
-flow, fiducials, horizon detection. The stream rides shared memory, so the saving is memory
+`CameraSpec::data_size()` returns that number for any combination. Sixteen times between the
+corners is worth having for anything that needs only luminance and geometry: optical flow,
+fiducials, horizon detection. The stream rides shared memory, so the saving is memory
 bandwidth rather than network, but at 60 fps it is 200 MB/s against 13 MB/s.
 
-From `examples/rust/src/bin/ex15_camera_mono.rs`, the two strings are the entire
-difference from `ex03_hello_image`:
+`ex15_camera_formats` opens `front_left` and prices the alternatives against the frames it
+is actually receiving. From `examples/rust/src/bin/ex15_camera_formats.rs`:
 
 ```rust
-const CAMERA: &str = "mono";
-const RESOLUTION: &str = "360p"; // 360p | 720p | 1080p -- robot-wide
-const FORMAT: &str = "mono8"; // mono8 | rgb8 | rgba8 -- per camera
+const CAMERA: &str = "front_left"; // every vrobot ships front_left and front_right
+const RESOLUTION: &str = "720p"; // 360p | 720p | 1080p -- robot-wide
+const FORMAT: &str = "rgba8"; // mono8 | rgb8 | rgba8 -- per camera
 ```
 
 <details>
-<summary>The same in C++ (<code>examples/cpp/ex15_camera_mono.cpp</code>)</summary>
+<summary>The same in C++ (<code>examples/cpp/ex15_camera_formats.cpp</code>)</summary>
 
 ```cpp
-constexpr const char* CAMERA = "mono";
-constexpr const char* RESOLUTION = "360p";  // 360p | 720p | 1080p -- robot-wide
-constexpr const char* FORMAT = "mono8";     // mono8 | rgb8 | rgba8 -- per camera
+constexpr const char* CAMERA = "front_left";  // every vrobot ships front_left and front_right
+constexpr const char* RESOLUTION = "720p";    // 360p | 720p | 1080p -- robot-wide
+constexpr const char* FORMAT = "rgba8";       // mono8 | rgb8 | rgba8 -- per camera
 ```
 
 </details>
 
 <details>
-<summary>The same in Python (<code>examples/python/ex15_camera_mono.py</code>)</summary>
+<summary>The same in Python (<code>examples/python/ex15_camera_formats.py</code>)</summary>
 
 ```python
-CAMERA = "mono"
-RESOLUTION = "360p"  # 360p | 720p | 1080p -- robot-wide
-FORMAT = "mono8"  # mono8 | rgb8 | rgba8 -- per camera
+CAMERA = "front_left"  # every vrobot ships front_left and front_right
+RESOLUTION = "720p"  # 360p | 720p | 1080p -- robot-wide
+FORMAT = "rgba8"  # mono8 | rgb8 | rgba8 -- per camera
 ```
 
 </details>
@@ -82,12 +82,19 @@ The three strings are the stream identity on the wire, so they are literal strin
 surface: there is no enum for either, and a typo in one of them is a stream that does not
 exist rather than a compile error.
 
-The stream name carries both, and `mounted_cameras()` reports the spec back:
-
 ```text
-camera stream: vrobots/1/i/cam/mono/360p_mono8
-mounted by this handle: [CameraSpec { name: "mono", resolution: P360, format: Mono8 }]
+camera stream: vrobots/1/i/cam/front_left/720p_rgba8
+
+frame 1280x720 = 921600 px, rgba8 at 4 B/px, step=5120 B/row, 3686400 B/frame
+  mono8:    921600 B/frame
+   rgb8:   2764800 B/frame
+  rgba8:   3686400 B/frame  <- this stream
 ```
+
+**Getting the cheap end means creating a camera**, since the pair the robot ships is rgba8
+and nothing reconfigures a camera you do not own. That is `mount_camera`, covered on
+[Lens and mount pose](05-lens-and-pose.md) and used by `ex17_camera_pose` -- the one example
+in the book that mounts.
 
 ## Resolution is robot-wide
 
@@ -100,8 +107,8 @@ Three consequences, in the order people meet them:
 1. Mounting a second camera at a different resolution from one **this handle** already
    holds is refused client-side with `VrError::InvalidArgument`, before anything reaches
    the wire. Mount them all at one resolution, or unmount the others first.
-2. The guard can only see this handle's cameras. Mounting `mono` at 360p does not unmount
-   the scene's `front_left` and `front_right`, but it does move the resolution knob, so
+2. The guard can only see this handle's cameras. Mounting a camera at 360p does not unmount
+   the robot's `front_left` and `front_right`, but it does move the resolution knob, so
    they come back at 360p under new names: `vrobots/1/i/cam/front_left/360p_rgba8`.
    Whatever was reading the 720p name is reading a service that no longer exists.
 3. Unmounting does not put the knob back. `unmount_camera` removes one camera; resolution
@@ -114,9 +121,10 @@ The refusal names the cameras in the way:
 invalid_argument: camera "wide" asks for 720p but "mono" is already mounted at 360p -- resolution is one setting for the WHOLE robot, and changing it restarts every stream under a new name. Mount them all at the same resolution, or unmount the others first
 ```
 
-> **Gotcha.** If `ex13_open_camera` times out on `front_left` at 720p, an earlier run of
-> `ex15_camera_mono` moved the robot to 360p. Open `front_left` at `"360p"` instead, or
-> restart the simulator.
+> **Gotcha.** If a camera example times out on `front_left` at 720p, something mounted a
+> camera at 360p and moved the robot with it. Open `front_left` at `"360p"` instead, or
+> restart the simulator. `ex17_camera_pose` is the only example here that can cause it, and
+> it mounts at 720p precisely so that it does not.
 
 ## What is checked before anything is sent
 

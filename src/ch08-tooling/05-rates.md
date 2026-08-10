@@ -3,7 +3,7 @@
 You watch one topic for a window and get its whole arrival distribution, which is the part an average hides.
 
 ```sh
-vrobots topic hz vrobots/1/z/state -w 5
+cargo run -p vrobots-sdk --bin vrobots -- topic hz vrobots/1/z/state -w 5
 ```
 
 When a control loop stutters, the mean rate is almost always fine. The two numbers
@@ -20,11 +20,12 @@ pub fn measure_rate(key: &str, window: Duration) -> VrResult<RateReport>
 pub fn measure_rate_with(key: &str, window: Duration, options: &ConnectOptions) -> VrResult<RateReport>
 ```
 
-Neither the C++ nor the Python surface has an equivalent: `measure_rate` and `RateReport`
-appear in neither `cpp/include/vrobots_sdk.hpp` nor `_vrsdk.pyi`, so `vrobots topic hz` is
-how the other two surfaces get the measurement, and Python can run that CLI in-process
-through `vrsdk.cli_main`. Do not confuse these calls with `robot.rate(hz)`, which paces
-your own loop and does exist on all three.
+All three surfaces carry it: Python as `vrsdk.measure_rate(key, window=5.0)` returning a
+`RateReport`, C++ as `vrsdk::measure_rate(key, window_s = 5.0)` returning
+`vrsdk::RateReport`, both mirroring the CLI's 5-second default window. `vrobots topic hz`
+remains the shell spelling, and Python can still run that CLI in-process through
+`vrsdk.cli_main`. Do not confuse these calls with `robot.rate(hz)`, which paces your own
+loop and also exists on all three.
 
 Neither prints anything: the result is the `RateReport` below, and formatting it is
 what `vrobots topic hz` does with it.

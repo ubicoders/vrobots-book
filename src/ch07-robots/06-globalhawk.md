@@ -55,10 +55,11 @@ robot's.
 | `SET_FW_CTRL_MODE` (310) | `set_fw_ctrl_mode(i32)` | 0 or 1 | live |
 | `SET_FW_EST_SOURCE` (311) | `set_fw_est_source(i32)` | 0 or 1 | live in `FW_ONBOARD_RATE` only |
 
-`SET_ANGVEL` has no typed wrapper, because no other robot type acts on it, so it goes
-through `send_cmd`. It carries a `vec3`, which means it is re-expressed from your header
-frame into the robot's as an axial vector; connect with `coord_frame_id` set to `"frd"` and
-`[0, 0, r]` means what it looks like.
+`SET_ANGVEL` (51) has the typed wrapper `set_angvel(vec3)`; the generic `send_cmd` path
+spells the same bytes, and ex33 keeps using it as the escape-hatch demonstration. It
+carries a `vec3`, which means it is re-expressed from your header frame into the robot's
+as an axial vector; connect with `coord_frame_id` set to `"frd"` and `[0, 0, r]` means
+what it looks like.
 
 There is no mixer in `FW_DIRECT_SURFACE`. Each entry drives its own panel, in this order,
 and the length must equal the panel count exactly: a wrong-length array makes the simulator
@@ -123,10 +124,11 @@ Which sensors it carries is not documented in the SDK; confirm against a live si
 
 ## Cameras
 
-Nothing is camera-specific to this robot type, and the IMU scene's defaults are not
-documented in the SDK; the sandbox test scene ships `front_left` and `front_right` at 720p
-rgba8. You can mount cameras with `mount_camera` either way. See
-[Cameras and images](../ch05-cameras/00-intro.md).
+Nothing is camera-specific to this robot type. Where a robot carries the default pair,
+`front_left` and `front_right` at 720p rgba8, `open_camera` attaches to either without
+changing anything; the IMU scene's own defaults are not documented in the SDK and may be
+none, in which case `mount_camera` is the only way to get pixels off it. `vrobots topic
+list` is the authority. See [Cameras and images](../ch05-cameras/00-intro.md).
 <!-- VERIFY: which cameras, if any, the IMU scene's Global Hawk ships by default. -->
 
 ## Known quirks

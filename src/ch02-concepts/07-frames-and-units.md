@@ -157,6 +157,6 @@ shape, so a comparison between `estimate.kin` and `kin` is field-by-field valid
 without any frame juggling. [Kinematics](../ch03-reading-state/02-kinematics.md)
 works through what that means for each field.
 
-**Next:** [Reading state](../ch03-reading-state/00-intro.md)
+**Next:** [Rotation conversions](08-rotation-conversions.md)
 
 **See also:** [Coordinate frames](../ch06-services/04-frames-config.md), [Kinematics](../ch03-reading-state/02-kinematics.md), [More than one robot](../ch08-tooling/06-multi-robot.md)

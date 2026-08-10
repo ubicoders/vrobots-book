@@ -2,6 +2,14 @@
 
 Camera frames arrive on a second transport, at their own rate, with their own timestamps, and this chapter is how you read them.
 
+**Assume a vrobot ships with `front_left` and `front_right` mounted, at 720p rgba8.** That
+is the starting assumption throughout this chapter and every camera example in the book:
+reading images means `open_camera` on one of that pair, which changes nothing in the
+simulator. It holds for the multirotor and the truck; robot types that carry no camera at
+all are the exception, and `vrobots topic list` settles it in one command. Creating a camera
+of your own is a separate, mutating operation, covered on
+[Lens and mount pose](05-lens-and-pose.md) and used by exactly one example.
+
 ## Frames never leave the host
 
 Camera frames ride **iceoryx2 shared memory**, so they are **same-host only**. This holds
@@ -53,7 +61,7 @@ The two streams share a clock and nothing else.
 | Read verb | `states()` | `fresh()`, `latest()`, `wait_new_frame()` |
 | Freshness | always returns the latest snapshot, changed or not | each frame is handed out once |
 | On a stall | keeps returning the last snapshot forever | `fresh()` returns `None`, `wait_new_frame` times out |
-| Existence | created by `connect` | created by `mount_camera`, or already there |
+| Existence | created by `connect` | already on the robot (`front_left`, `front_right`), or created by `mount_camera` |
 
 `Frame::t_ns` and `State::t_ns` are the same clock, and `Frame::elapsed` and
 `State::elapsed` count from the same epoch, the robot's first state sample. That is the

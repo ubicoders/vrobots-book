@@ -3,7 +3,7 @@
 You print what this build speaks, compare it with what the simulator speaks, and learn why an exact pin is not pedantry.
 
 ```sh
-vrobots --version
+cargo run -p vrobots-sdk --bin vrobots -- --version
 cargo run -p vrobots-examples --bin ex12_version_info
 ./target/cpp-build/ex12_version_info
 python examples/python/ex12_version_info.py

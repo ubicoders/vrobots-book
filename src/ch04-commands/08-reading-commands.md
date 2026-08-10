@@ -197,6 +197,6 @@ which is everything that is not the one id you asked for. `seq_gaps` is only mea
 with a single publisher, since two senders interleaving their own sequences look like gaps.
 Decode errors are counted rather than returned and never tear the subscription down.
 
-**Next:** [Cameras and images](../ch05-cameras/00-intro.md)
+**Next:** [Publishing estimates](09-publishing-estimates.md)
 
 **See also:** [Fixed wing control](05-fixed-wing.md), [Stream health](../ch03-reading-state/08-health.md), [Frames, axes and units](../ch02-concepts/07-frames-and-units.md)

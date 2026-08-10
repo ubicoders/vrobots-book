@@ -41,6 +41,7 @@ defines, and terms are defined once, here or in
 | [What connect actually does](05-connect.md) | The four steps behind a create, and every option you can change |
 | [Five rules that explain everything](06-five-rules.md) | The five behaviours above, with the failure signature of each |
 | [Frames, axes and units](07-frames-and-units.md) | Which vector is in which frame, and what `coord_frame_id` decides |
+| [Rotation conversions](08-rotation-conversions.md) | Quaternions, angles and matrices, and re-expressing a state in another frame |
 
 ## What it does not cover
 

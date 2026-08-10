@@ -16,8 +16,8 @@ tagged `[z]` or `[i]`.
 |---|---|---|---|---|
 | `vrobots/{sys_id}/z/state` | `[z]` | the simulator publishes | `swarmbotix.states.State`, the full snapshot: kinematics, wrench, actuator, sensors, environment, estimate | 25 Hz |
 | `vrobots/{sys_id}/z/cmd` | `[z]` | the simulator subscribes | `swarmbotix.commands.Command`, one command id plus its `CmdArgs`. Many-to-many, so clients can read it too | set by the sender; the in-game IMU panel publishes `SET_ANGVEL` at 50 Hz |
-| `vrobots/{sys_id}/z/frames` | `[z]` | the simulator publishes | `swarmbotix.coordinates.CoordFrameDef`, the resulting frame definitions. Distinct from the `srv/frames` service, which sets them | not documented |
-| `vrobots/{sys_id}/z/estimate` | `[z]` | the simulator subscribes | `swarmbotix.states.EstimateState`, an attitude estimate you publish. Read by the fixed wing under `FW_EST_OBSERVER`; the SDK does not publish it yet | set by the sender; older than 0.5 s counts as stale |
+| `vrobots/{sys_id}/z/frames` | `[z]` | the simulator publishes | `swarmbotix.coordinates.CoordFrameDef`, the resulting frame definitions, one message per distinct frame the robot and its devices use. Distinct from the `srv/frames` service, which sets them. Read with `frame_def` | on change, plus a slow keepalive |
+| `vrobots/{sys_id}/z/estimate` | `[z]` | the simulator subscribes | `swarmbotix.states.EstimateState`, an attitude estimate you publish with `publish_estimate` or `publish_estimate_euler`. Read by the fixed wing under `FW_EST_OBSERVER`; nothing else consumes it, and the simulator never echoes it back into `State.estimate` | set by the sender; aged from arrival and stale after 0.5 s, so publish at 20 Hz or better |
 | `vrobots/{sys_id}/z/srv/{segment}` | `[z]` | request and response | per-robot services; see the segment tables below | on demand |
 | `vrobots/{sys_id}/i/cam/{name}/{res}_{fmt}` | `[i]` | the simulator publishes | raw camera frames, shared memory, same host only | not documented; measure with `vrobots topic hz` |
 | `vrobots/manager/z/srv/create` | `[z]` | request and response | `SrvVRobotCreate` to `SrvVRobotCreated`; the reply carries the assigned `sys_id`. The one non-idempotent service in the system | on demand |
@@ -33,7 +33,7 @@ Every live robot serves all seven of these on `vrobots/{sys_id}/z/srv/{segment}`
 
 | Segment | Request to reply | Purpose | SDK entry point |
 |---|---|---|---|
-| `activate` | payload-less GET to `SrvAck` | releases a dormant robot's dynamics hold; an already-active robot acks and no-ops | `connect` when `activate_after_create` is set |
+| `activate` | payload-less GET to `SrvAck` | releases a dormant robot's dynamics hold; an already-active robot acks and no-ops | `activate`, and `connect` when `activate_after_create` is set |
 | `reset` | `SrvReset`, or a payload-less GET, to `SrvAck` | teleports to the first-physics-step pose, zeroes velocity, rests the actuators, re-latches the initial command | `reset` |
 | `params` | `SrvVRobotPhysicalProperty` to `SrvAck` | mass and principal moments of inertia | `set_physical_params` |
 | `skin` | `SrvVRobotSkin` to `SrvAck` | appearance; the only service that ever answers `ok = false` | `set_skin` |
@@ -41,9 +41,11 @@ Every live robot serves all seven of these on `vrobots/{sys_id}/z/srv/{segment}`
 | `frames` | `SrvVRobotFrame` to `SrvAck` | which coordinate frame the robot and each device report in | `set_frames` |
 | `cameras` | `SrvCameraConfig` to `SrvAck` | upsert, remove or replace the camera list | `mount_camera`, `mount_camera_with`, `unmount_camera` |
 
-> **Gotcha.** `reset` is the one key where a payload-less GET performs the action instead of
-> probing for a receipt. The simulator enqueues the empty request because the in-game Reset
-> button cannot attach a payload. Probing `srv/reset` for reachability resets the robot.
+> **Gotcha.** `reset` and `activate` are the two keys where a payload-less GET performs the
+> action instead of probing for a receipt. The simulator enqueues the empty request because
+> the in-game Reset button cannot attach a payload. Probing `srv/reset` for reachability
+> resets the robot; probing `srv/activate` releases a dormant robot's hold, which is
+> idempotent and so harmless on one already running.
 
 ## Type-specific service segments
 

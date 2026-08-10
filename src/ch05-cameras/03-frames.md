@@ -140,15 +140,16 @@ Called on row 0 and row `height - 1` of a forward-facing camera, it separates sk
 ground and therefore confirms both facts at once:
 
 ```text
-Image left t=3.214 size=(1280x720) seq=42 lag_vs_state=8.4 ms
+Image front_left t=3.214 size=(1280x720) seq=42 lag_vs_state=8.4 ms
       sky-ness (B-R) top=+98 bottom=-25 (top-down: sky above ground), fov_y=61.9 deg
 ```
 
 <!-- VERIFY: t, seq and lag_vs_state above are one run's values and have not been re-measured against a live simulator. -->
 
 `mono8` has one byte per pixel, so there is no channel order and no RGB against BGR
-question at all: `data[y * step + x]` is the intensity. That is what
-`ex15_camera_mono` reads when it averages the middle row.
+question at all: `data[y * step + x]` is the intensity. Getting one means mounting a camera
+of your own, since the pair every vrobot ships is `rgba8`; `ex15_camera_formats` prices
+that trade, and `ex17_camera_pose` is the example that mounts.
 
 ## Decoding a frame with no simulator
 

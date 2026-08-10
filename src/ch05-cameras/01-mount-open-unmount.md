@@ -3,13 +3,26 @@
 Three verbs with three different effects on the simulator, only one of which changes anything.
 
 ```sh
-cargo run -p vrobots-examples --bin ex03_hello_image
-./target/cpp-build/ex03_hello_image
-python examples/python/ex03_hello_image.py
 cargo run -p vrobots-examples --bin ex13_open_camera
 ./target/cpp-build/ex13_open_camera
 python examples/python/ex13_open_camera.py
+cargo run -p vrobots-examples --bin ex17_camera_pose
+./target/cpp-build/ex17_camera_pose
+python examples/python/ex17_camera_pose.py
 ```
+
+## Start by opening what is already there
+
+**Every vrobot ships with `front_left` and `front_right` mounted, at 720p rgba8.** That is
+the default assumption behind every camera example in this book: to read images you
+`open_camera` one of those two, and the simulator is not changed in any way. Mounting is
+for the case the pair cannot serve -- a camera somewhere else on the robot, pointing
+somewhere else, through a different lens, or in a different format -- and among the
+examples only `ex17_camera_pose` does it.
+
+That is not a limitation of the API, it is an ordering of it: the mutating verb is the one
+with a cleanup step, a name collision to avoid and a robot-wide resolution knob behind it,
+and none of that is worth paying for a picture the robot is already publishing.
 
 ## The three verbs
 
@@ -117,45 +130,54 @@ Mounting a name that is already mounted reconfigures it, and if the resolution o
 changes then the stream name changes with it, so the old stream ends and a new one begins.
 Anything still holding the old handle is reading a service that no longer exists.
 
-From `examples/rust/src/bin/ex03_hello_image.rs`, the whole of mounting:
+From `examples/rust/src/bin/ex17_camera_pose.rs`, the one example that mounts:
 
 ```rust
 let robot = VirtualRobot::connect(RobotType::Multirotor, Some(SYS_ID))?;
 
-// mount_camera CREATES the camera on the robot (srv/cameras) and subscribes
-// to its iox2 stream. Use open_camera(...) to subscribe to an existing one
-// without mutating the sim.
-let cam = robot.mount_camera(CAMERA, RESOLUTION, FORMAT)?;
+let options = CameraOptions::default()
+    .with_mount_position(MOUNT_POSITION)
+    .with_mount_euler_deg(MOUNT_EULER_DEG)
+    .with_focal_length(FOCAL_PX)
+    .with_clip(0.2, 500.0);
+
+// mount_camera_with CREATES the camera on the robot (srv/cameras) and
+// subscribes to its iox2 stream in one call.
+let cam = robot.mount_camera_with(CAMERA, RESOLUTION, FORMAT, &options)?;
 println!("camera stream: {}", cam.service_name());
 ```
 
 <details>
-<summary>The same in C++ (<code>examples/cpp/ex03_hello_image.cpp</code>)</summary>
+<summary>The same in C++ (<code>examples/cpp/ex17_camera_pose.cpp</code>)</summary>
 
 ```cpp
 vrsdk::VirtualRobot robot(vrsdk::RobotType::Multirotor, SYS_ID);
 robot.connect();
 
-// mount_camera CREATES the camera on the robot (srv/cameras) and
-// subscribes to its iox2 stream. Use open_camera(...) to subscribe to an
-// existing one without mutating the sim.
-vrsdk::CameraStream cam = robot.mount_camera(CAMERA, RESOLUTION, FORMAT);
+vrsdk::CameraStream cam = robot.mount_camera(CAMERA, RESOLUTION, FORMAT, &options);
 std::printf("camera stream: %s\n", cam.service_name().c_str());
 ```
 
 </details>
 
 <details>
-<summary>The same in Python (<code>examples/python/ex03_hello_image.py</code>)</summary>
+<summary>The same in Python (<code>examples/python/ex17_camera_pose.py</code>)</summary>
 
 ```python
 mr = VirtualRobot(RobotType.MULTIROTOR, sys_id=SYS_ID)
 mr.connect()
 
-# mount_camera CREATES the camera on the robot (srv/cameras) and subscribes
-# to its iox2 stream. Use open_camera(...) to subscribe to an existing one
-# without mutating the sim.
-cam = mr.mount_camera(CAMERA, RESOLUTION, FORMAT)
+cam = mr.mount_camera(
+    CAMERA,
+    RESOLUTION,
+    FORMAT,
+    mount_position=MOUNT_POSITION,
+    mount_euler_deg=MOUNT_EULER_DEG,
+    fx=FOCAL_PX,
+    fy=FOCAL_PX,
+    near_clip=0.2,
+    far_clip=500.0,
+)
 print(f"camera stream: {cam.service_name}")
 ```
 
@@ -164,12 +186,12 @@ print(f"camera stream: {cam.service_name}")
 `service_name` is a method in Rust and C++ and a property in Python, and it reports the same
 string in all three.
 
-With `SYS_ID = 1`, `CAMERA = "left"`, `RESOLUTION = "720p"` and `FORMAT = "rgb8"`, that
+With `SYS_ID = 1`, `CAMERA = "tilt"`, `RESOLUTION = "720p"` and `FORMAT = "rgb8"`, that
 prints the iceoryx2 service name, which is what `vrobots topic list` shows for the same
 stream:
 
 ```text
-camera stream: vrobots/1/i/cam/left/720p_rgb8
+camera stream: vrobots/1/i/cam/tilt/720p_rgb8
 ```
 
 The ack from `srv/cameras` is a receipt, not a result. The confirmation that the camera
@@ -183,9 +205,10 @@ camera. The price is that **the name, resolution and format must match the publi
 exactly**: on iceoryx2 those three strings are the stream identity, and there is no type
 negotiation behind them.
 
-The test scene ships both robots with `front_left` and `front_right` at 720p **rgba8**,
-which is Unity's native readback and not `rgb8`. Those are the cameras `ex13_open_camera`
-reads, and the mounting examples leave them alone.
+Every vrobot ships `front_left` and `front_right` at 720p **rgba8**, which is Unity's
+native readback and not `rgb8` -- a detail worth getting right, since `rgb8` is the
+signature default and asking for it here is one of the two ways to earn the timeout below.
+Those are the cameras every camera example reads.
 
 From `examples/rust/src/bin/ex13_open_camera.rs`, opening with the failure spelled out:
 
@@ -280,10 +303,11 @@ unmount_camera refused, correctly: [2] invalid_argument: camera "front_left" was
 a read-back: `srv/cameras` has no get verb, and the robot may well carry cameras this
 handle knows nothing about. `vrobots topic list` is the read-back.
 
-> **Gotcha.** The mounting examples run for a fixed frame count rather than looping
-> forever, so that they reach the `unmount_camera` call before exiting. Ctrl-C skips it and
-> leaves the camera mounted in a simulator that outlives your process. Unmount it by
-> mounting the same name again from a short program, or restart the simulator.
+> **Gotcha.** A program that mounts must reach its `unmount_camera` call before exiting,
+> which is why `ex17_camera_pose` runs for a fixed frame count rather than looping forever.
+> Ctrl-C skips the cleanup and leaves the camera mounted in a simulator that outlives your
+> process; unmount it by mounting the same name again from a short program, or restart the
+> simulator. The examples that only open have no such deadline.
 
 **Next:** [Formats and resolution](02-formats-and-resolution.md)
 

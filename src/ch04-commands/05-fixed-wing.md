@@ -13,7 +13,8 @@ python examples/python/ex33_fw_est_source.py <sys_id>
 ```
 
 The Global Hawk is scene-authored and lives in the IMU scene, not the sandbox, so both
-examples take the live `sys_id` as an argument. Find it with `vrobots topic list`.
+examples take the live `sys_id` as an argument. Find it with `cargo run -p vrobots-sdk
+--bin vrobots -- topic list`.
 
 ## Two modes, and what reset does to them
 
@@ -53,8 +54,12 @@ side, so there is no need to ramp in or out.
 | `set_fw_thrust_bias` | `(&self, newtons: f64) -> VrResult<()>` | `SET_FW_THRUST_BIAS` (309) | newtons, signed trim; `0.0` is neutral | onboard only |
 | `set_fw_est_source` | `(&self, source: i32) -> VrResult<()>` | `SET_FW_EST_SOURCE` (311) | 0 or 1; anything else is `InvalidArgument` | onboard only |
 
-Rate setpoints have no typed method, because no other robot type acts on `SET_ANGVEL`. Send
-them through [`send_cmd`](06-generic-cmd.md) with a `vec3` payload in rad/s.
+The rate setpoint is a sixth command, and it is not a `SET_FW_*` id: it is `SET_ANGVEL`
+(51), shared across the whole id space with the fixed wing as the only type that acts on
+it. `set_angvel(&self, rates: [f64; 3]) -> VrResult<()>` is its typed method. The triple is
+`[p, q, r]` in rad/s in your header frame, and the robot re-expresses it as an **axial**
+vector, so a conversion between two opposite-handed conventions flips its sign where a
+force's would not.
 
 ## Six panels, no mixer
 
@@ -279,11 +284,14 @@ flying on truth.
 > estimator publishing at 1 Hz behaves like one that is not publishing at all, and the only
 > difference you can measure is that the tracking error stops changing.
 
-The SDK does not publish `z/estimate` yet, so exercising the observer path today needs a
-separate publisher on `vrobots/{sys_id}/z/estimate` carrying
-`swarmbotix.states.EstimateState` with `estimate.valid = true` and a frame-tagged
-orientation.
+This page is only the selector. The other half is `publish_estimate`, which puts a
+`swarmbotix.states.EstimateState` on `vrobots/{sys_id}/z/estimate` for `FW_EST_OBSERVER` to
+find, and `examples/rust/src/bin/ex35_publish_estimate.rs` is the paired publisher: it
+flies the same aircraft on a truth copy of its own attitude, then on a copy pitched up five
+degrees, and the airframe trims down to chase a nose position that was never real.
+[Publishing estimates](09-publishing-estimates.md) is that side in full, including the
+half-second staleness clock from the publisher's end.
 
 **Next:** [The generic command](06-generic-cmd.md)
 
-**See also:** [Commands latch](01-latching.md), [Reading someone else's commands](08-reading-commands.md), [Global Hawk](../ch07-robots/06-globalhawk.md)
+**See also:** [Publishing estimates](09-publishing-estimates.md), [Commands latch](01-latching.md), [Reading someone else's commands](08-reading-commands.md), [Global Hawk](../ch07-robots/06-globalhawk.md)

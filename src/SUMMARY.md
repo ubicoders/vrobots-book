@@ -24,6 +24,7 @@
     - [What connect actually does](ch02-concepts/05-connect.md)
     - [Five rules that explain everything](ch02-concepts/06-five-rules.md)
     - [Frames, axes and units](ch02-concepts/07-frames-and-units.md)
+    - [Rotation conversions](ch02-concepts/08-rotation-conversions.md)
 
 ---
 
@@ -49,6 +50,7 @@
     - [The generic command](ch04-commands/06-generic-cmd.md)
     - [Commands nothing acts on](ch04-commands/07-ignored-commands.md)
     - [Reading someone else's commands](ch04-commands/08-reading-commands.md)
+    - [Publishing estimates](ch04-commands/09-publishing-estimates.md)
 
 - [Cameras and images](ch05-cameras/00-intro.md)
     - [Mount, open and unmount](ch05-cameras/01-mount-open-unmount.md)

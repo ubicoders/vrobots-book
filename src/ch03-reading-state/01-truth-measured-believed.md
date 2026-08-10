@@ -110,8 +110,7 @@ C++ reaches the block through `s.raw`, the copied C struct, where the other two 
 fields on the snapshot: `r.estimate.kin.lin_pos` against `s.estimate.kin.lin_pos`. The
 fields, the units and the subtraction that gives the estimator error are identical.
 
-In a scene that runs no estimator, that prints an invalid stamp, zeroed vectors and an
-empty frame id:
+Today that always prints an invalid stamp, zeroed vectors and an empty frame id:
 
 <!-- VERIFY: printout reconstructed from the format strings; the values are illustrative, not captured from a run. -->
 
@@ -120,9 +119,20 @@ BELIEVED  estimate  [INVALID t=0.000]  frame=""
   lin_pos   (  +0.000,  +0.000,  +0.000) m       (estimate.kin - kin IS the error)
 ```
 
-That is what "no estimator" looks like on the wire. It is not a decode failure and not
-a dropped block: a missing nested table decodes to its `Default`, which is all zeros,
-`false` and empty strings.
+It is not a decode failure and not a dropped block: a missing nested table decodes to its
+`Default`, which is all zeros, `false` and empty strings. The simulator runs no estimator
+and omits the field on purpose, for the same reason this page opens with. An estimate that
+silently mirrors truth would make `estimate.kin - kin` a tautology, so the block is absent
+rather than filled from the truth block.
+
+## Publishing the belief yourself
+
+The believed block is therefore yours to supply, and it travels on its own topic rather
+than in the snapshot. `publish_estimate` puts a `swarmbotix.states.EstimateState` on
+`vrobots/{sys_id}/z/estimate`, where the fixed wing reads it under `FW_EST_OBSERVER`.
+Read `sensors` off `z/state`, run your filter, publish the result, and the subtraction
+against `kin` measures a real estimator error. [Publishing
+estimates](../ch04-commands/09-publishing-estimates.md) is that loop end to end.
 
 > **Gotcha.** `estimate.valid` is false until the filter converges, and an unconverged
 > estimate that silently mirrors truth is the classic trap. A filter initialised from
@@ -146,4 +156,4 @@ a dropped block: a missing nested table decodes to its `Default`, which is all z
 
 **Next:** [Kinematics](02-kinematics.md)
 
-**See also:** [Frames, axes and units](../ch02-concepts/07-frames-and-units.md), [A tour of the whole snapshot](09-sensors-tour.md), [Sensor noise](../ch06-services/03-sensor-config.md)
+**See also:** [Publishing estimates](../ch04-commands/09-publishing-estimates.md), [Frames, axes and units](../ch02-concepts/07-frames-and-units.md), [A tour of the whole snapshot](09-sensors-tour.md), [Sensor noise](../ch06-services/03-sensor-config.md)

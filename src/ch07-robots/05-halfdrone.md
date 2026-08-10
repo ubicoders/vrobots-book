@@ -98,8 +98,10 @@ Which sensors it carries is not documented in the SDK; confirm against a live si
 
 ## Cameras
 
-Nothing is camera-specific to this robot type. The test scene ships `front_left` and
-`front_right` at 720p rgba8, and you can mount more with `mount_camera`. See
+Nothing is camera-specific to this robot type. Where a robot carries the default pair,
+`front_left` and `front_right` at 720p rgba8, `open_camera` attaches to either without
+changing anything; this one may carry none, in which case `mount_camera` is the only way to
+get pixels off it. `vrobots topic list` is the authority. See
 [Cameras and images](../ch05-cameras/00-intro.md).
 <!-- VERIFY: whether the scene-authored half drone ships the two default cameras. -->
 

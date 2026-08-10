@@ -8,9 +8,17 @@ cargo run -p vrobots-examples --bin ex17_camera_pose
 python examples/python/ex17_camera_pose.py
 ```
 
+This is the page where a camera gets created rather than opened, and `ex17_camera_pose` is
+the one example in the book that does it. Everywhere else the assumption holds that
+**every vrobot already ships `front_left` and `front_right` at 720p rgba8**, and a reader
+just opens one. You reach for `mount_camera` when that pair cannot serve: a camera
+somewhere else on the robot, pointing somewhere else, through a different lens, or in a
+different format.
+
 `mount_camera` uses the defaults: at the robot origin, looking along its forward axis, 600
 px focal length. `mount_camera_with` takes a `CameraOptions` and configures the mount and
-the lens in the same call.
+the lens in the same call. Whatever it creates is yours to remove, and `unmount_camera` at
+the end of the run is what keeps the robot's own two cameras the only ones left.
 
 ## What you can ask for
 

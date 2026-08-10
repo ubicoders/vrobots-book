@@ -16,21 +16,15 @@ timestamps, and the same stable error codes in
 
 ## What you need
 
-The SDK itself is one pip command, which installs the compiled core, the `vrsdk` module and
-the `vrobots` diagnostic command:
-
-```sh
-pip install ubicoders-vrsdk
-```
-
 | Requirement | Notes |
 |---|---|
-| The `ubicoders-vrsdk` wheel | The whole SDK. No toolchain, clone or submodule needed. |
+| Python 3.8 or newer | `pip install ubicoders-vrsdk` is the entire SDK install. The wheel carries the compiled Rust core and the `vrobots` command, so no toolchain, no `flatc` and no clone are involved. Windows and Linux x86-64. |
+| The example programs | The wheel ships the library, not the examples. A plain `git clone` of this repository gets them; the Python ones import `vrsdk` and nothing else. |
 | The Unity simulator, in Play mode | Required for anything that talks to a robot. |
-| Rust 1.89 or newer | Only to build from source, for the Rust and C++ surfaces. The crate is edition 2024. |
+| Rust 1.89 or newer | Only to work in Rust or C++ from source. The crate is edition 2024, and the clone needs `--recurse-submodules` for the private `vrobots_msgs` submodule that ships the generated FlatBuffers code. |
 
-[Installing the SDK and the simulator](ch01-getting-started/01-install.md) covers all three
-in order, and puts the source build in its own section at the end.
+[Installing the SDK and the simulator](ch01-getting-started/01-install.md) covers them in
+order.
 
 ## The one idea to internalise first
 
@@ -146,14 +140,14 @@ the file), and is mirrored one for one in Python and C++ under `examples/python/
 Run one by its bin name, or by the equivalent name in the language you are using:
 
 ```sh
-python examples/python/ex01_hello_states.py
 cargo run -p vrobots-examples --bin ex01_hello_states
 ./target/cpp-build/ex01_hello_states
+python examples/python/ex01_hello_states.py
 ```
 
-The Python line needs only the wheel. The Rust and C++ lines assume the source build in
+The C++ line assumes the build in
 [Installing the SDK and the simulator](ch01-getting-started/01-install.md); on Windows the
-C++ binary is `target\cpp-build\Release\ex01_hello_states.exe`.
+binary is `target\cpp-build\Release\ex01_hello_states.exe`.
 
 Every code block in this book is copied from one of those files or from a signature in the
 SDK source, so anything you read here compiles as written.

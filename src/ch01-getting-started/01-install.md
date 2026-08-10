@@ -1,41 +1,90 @@
 # Installing the SDK and the simulator
 
-Install the SDK with one pip command, then get a simulator running on Windows, Ubuntu or
-WSL.
+Install the SDK with one `pip` command, then get a simulator running on Windows, Ubuntu or WSL.
 
 ```sh
 pip install ubicoders-vrsdk
 ```
 
-That is the whole SDK install. There is no toolchain to set up, no repository to clone and
-no submodule to initialise: the wheel ships the compiled Rust core inside it.
+## What pip gives you
 
-## What the wheel gives you
+That command is the whole SDK install: the wheel carries the compiled Rust core, so no Rust
+toolchain, no `flatc`, no `protoc` and no repository clone is involved. It puts two things on
+your machine: `vrsdk`, the package every Python example in this book imports, and `vrobots`,
+the command line tool of [The vrobots command](../ch08-tooling/01-cli.md), which is the same
+program as the Rust build's rather than a second implementation.
 
-| You get | How you reach it |
-|---|---|
-| The Python SDK | `import vrsdk` |
-| The `vrobots` diagnostic command | `vrobots --version`, `vrobots topic list` |
-
-The command is a console entry point installed beside the module, so every `vrobots ...`
-line in this book runs as written once the wheel is installed.
-
-Two extra packages matter only for the camera chapters:
-
-| Package | Needed for | Without it |
+| Requirement | Version | Notes |
 |---|---|---|
-| `numpy` | any camera example | required; install it alongside the wheel |
-| `opencv-python` | showing frames in a window | [Hello image](06-hello-image.md) prints metadata instead of opening a window, and [Saving a frame](../ch05-cameras/07-saving-frames.md) writes a PPM instead of a PNG |
+| Python | 3.8 or newer | one `abi3` wheel per platform covers 3.8 through 3.13 and later |
+| Platform | Windows x86-64, Linux x86-64 | Linux needs glibc 2.17 or newer (`manylinux2014`); macOS is not published yet |
+| The Unity simulator | in Play mode | required by anything that talks to a robot |
+
+`numpy` arrives with the wheel, because `frame.image` hands back an ndarray. `opencv-python`
+does not, and it is what the camera examples want in order to open a window:
 
 ```sh
-pip install numpy opencv-python
+pip install "ubicoders-vrsdk[examples]"
 ```
 
-The one page that needs OpenCV outright is
-[Showing frames in a window](../ch05-cameras/08-showing-frames.md), in every language.
+Without it, [Hello image](06-hello-image.md) prints metadata instead of opening a window and
+[Saving a frame](../ch05-cameras/07-saving-frames.md) writes a PPM instead of a PNG. The one
+page that needs OpenCV outright is [Showing frames in a window](../ch05-cameras/08-showing-frames.md),
+in every language.
 
-> **Note.** Anything that talks to a robot also needs the simulator in Play mode. The
-> `vrobots --version` check below is the one step that works without it.
+> **Gotcha.** No source distribution is published, deliberately: a source build needs the
+> Rust toolchain and a private submodule. On a platform with no wheel, pip therefore stops
+> with `No matching distribution found for ubicoders-vrsdk` rather than starting a compile
+> that cannot finish.
+
+## Getting the example programs
+
+The wheel ships the library, not the example programs the pages of this book run. Those live
+in the repository, and the Python ones need nothing from it but themselves:
+
+```sh
+git clone https://github.com/ubicoders0/vrobots_sdk
+python vrobots_sdk/examples/python/ex01_hello_states.py
+```
+
+Plain `git clone`, with no `--recurse-submodules`: the submodule only matters if you build
+the Rust or C++ surfaces. Every Python example imports `vrsdk` and nothing else from the
+tree, so one file copied out of it runs just as well on its own.
+
+## Building the Rust and C++ surfaces
+
+Skip this section unless you are working in Rust or C++. Neither surface is published as a
+package, so both start from a clone that includes the `vrobots_msgs` submodule. That
+submodule ships the generated FlatBuffers code, which is why no `flatc` is needed, and it is
+a private repository, so the clone below needs access to it.
+
+```sh
+git clone --recurse-submodules https://github.com/ubicoders0/vrobots_sdk
+cd vrobots_sdk
+cargo build --workspace
+```
+
+Rust 1.89 or newer is required, since the crate is edition 2024; install it from
+<https://rustup.rs/>. If you already cloned without the submodule, the build fails and says
+so. Repair it with:
+
+```sh
+git submodule update --init --recursive
+```
+
+The C++ examples are a CMake project over the header-only wrapper. Building the C ABI crate
+generates the C header, so that is the only further prerequisite:
+
+```sh
+cargo build -p vrobots-sdk-capi --release
+cmake -S examples/cpp -B target/cpp-build -DCMAKE_BUILD_TYPE=Release
+cmake --build target/cpp-build --config Release
+```
+
+That puts one binary per example under `target/cpp-build/`, which is the path the `sh` block
+on each page names. On Windows the binaries land in `target\cpp-build\Release\` and carry an
+`.exe` suffix, and the DLL is copied beside each one; on Linux the build rpath points at the
+cargo target directory, so no `LD_LIBRARY_PATH` is needed.
 
 ## Getting the simulator
 
@@ -125,7 +174,7 @@ nohup ./virtual_robots.x86_64 -force-vulkan > output.log 2>&1 &
 
 ## Verifying the install
 
-This prints what your build actually speaks, and it needs no simulator.
+This prints what the SDK you just installed actually speaks, and it needs no simulator.
 
 ```sh
 vrobots --version
@@ -141,74 +190,14 @@ vrobots-sdk 0.1.4
 ```
 
 The first line is the SDK release. The second is a `git describe` of the `vrobots_msgs`
-schema the FlatBuffers code was generated from, so it moves when the schema does. The
+submodule the FlatBuffers code was generated from, so it moves when the schema does. The
 three pins are exact rather than caret ranges: iceoryx2 compares major, minor and patch on
 every shared-memory open, and a version one patch off does not error, it silently delivers
 nothing. That is the first thing to compare against the simulator build when fields look
 like garbage or a camera stream never appears.
 
-## Building from source
-
-Skip this section unless you are writing Rust or C++, or working on the SDK itself. The
-pip install above already covers the Python path.
-
-The Rust crate is the single implementation, and the C++ and Python surfaces are thin
-bindings over it, so a source build gives you all three from one clone.
-
-```sh
-git clone --recurse-submodules https://github.com/ubicoders0/vrobots_sdk
-cd vrobots_sdk
-cargo build --workspace
-```
-
-| Requirement | Version | Notes |
-|---|---|---|
-| Rust | 1.89 or newer | edition 2024; install from <https://rustup.rs/> |
-| `vrobots_msgs` submodule | pinned by the repo | ships the generated FlatBuffers Rust |
-
-You do **not** need `flatc` or `protoc`. The submodule carries the generated code, which is
-why the clone above passes `--recurse-submodules`. If you already cloned without it, the
-build fails and says so. Repair it with:
-
-```sh
-git submodule update --init --recursive
-```
-
-The C++ examples are a CMake project over the header-only wrapper. Building the C ABI crate
-generates the C header, so that is the only prerequisite:
-
-```sh
-cargo build -p vrobots-sdk-capi --release
-cmake -S examples/cpp -B target/cpp-build -DCMAKE_BUILD_TYPE=Release
-cmake --build target/cpp-build --config Release
-```
-
-That puts one binary per example under `target/cpp-build/`, which is the path the `sh` block
-on each page names. On Windows the binaries land in `target\cpp-build\Release\` and carry an
-`.exe` suffix, and the DLL is copied beside each one; on Linux the build rpath points at the
-cargo target directory, so no `LD_LIBRARY_PATH` is needed.
-
-To build the Python wheel from the clone rather than installing it from PyPI, run
-`maturin develop --release` in `crates/vrobots-sdk-py/`.
-
-From a clone, the `vrobots` command is also reachable without installing the wheel:
-
-```sh
-cargo run -p vrobots-sdk --bin vrobots -- --version
-```
-
-## Getting the examples
-
-The book's thirty-three example programs live in the SDK repository under
-`examples/python/`, `examples/rust/src/bin/` and `examples/cpp/`, mirrored one for one. The
-wheel does not carry them, so clone the repository if you want to run them as written:
-
-```sh
-git clone https://github.com/ubicoders0/vrobots_sdk
-python vrobots_sdk/examples/python/ex01_hello_states.py
-```
-
-Running the Python examples needs only the wheel; the clone is just how you get the files.
+In a source checkout, `cargo run -p vrobots-sdk --bin vrobots -- --version` prints the same
+block.
 
 **Next:** [First contact: is anything publishing?](02-first-contact.md)
 

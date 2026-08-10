@@ -107,10 +107,11 @@ and still acknowledged `ok`.
 
 ## Cameras
 
-Nothing is camera-specific to this robot type. The test scene ships `front_left` and
-`front_right` at 720p rgba8, and you can mount more with `mount_camera`. Per-robot camera
-intrinsics are not documented in the SDK; they are whatever `CameraOptions` requested, read
-back through `Frame::intrinsics`. See [Cameras and images](../ch05-cameras/00-intro.md).
+Nothing is camera-specific to this robot type. Like every vrobot it ships `front_left` and
+`front_right` at 720p rgba8, which is what `open_camera` attaches to; mount more with
+`mount_camera` when that pair cannot serve. Per-robot camera intrinsics are not documented
+in the SDK; they are whatever `CameraOptions` requested, read back through
+`Frame::intrinsics`. See [Cameras and images](../ch05-cameras/00-intro.md).
 <!-- VERIFY: whether the scene-authored truck ships the same two default cameras as the multirotor in the test scene. -->
 
 ## Known quirks

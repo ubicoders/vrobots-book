@@ -19,7 +19,7 @@ constant name for logging, returning `""` for an unknown id.
 | `SET_VEL` | 2 | not documented | m/s | `send_cmd` | nothing | not yet |
 | `SET_POS` | 3 | not documented | m | `send_cmd` | nothing | not yet |
 | `SET_ANGACC` | 50 | not documented | rad/s² | `send_cmd` | nothing | not yet |
-| `SET_ANGVEL` | 51 | `vec3` | rad/s, body rates | `send_cmd`; read back with `subscribe_setpoint` | GlobalHawk onboard rate loop | **live** |
+| `SET_ANGVEL` | 51 | `vec3` | rad/s, body rates in your header frame; converted as an **axial** vector, so it carries the handedness sign | `set_angvel`; read back with `subscribe_setpoint` | GlobalHawk onboard rate loop | **live** |
 | `SET_EULER` | 52 | not documented | rad | `send_cmd` | nothing | not yet |
 | `SET_EULER_DOT` | 53 | not documented | rad/s | `send_cmd` | nothing | not yet |
 | `SET_QUAT` | 54 | not documented | unit quaternion, `[x, y, z, w]` | `send_cmd` | nothing | not yet |
@@ -51,9 +51,10 @@ simulator before you build on it. The units given for those ids follow from the 
 everything-is-SI rule and the constant's name rather than from a statement in the source.
 <!-- VERIFY: units for the not-yet-acted-on ids (1, 2, 3, 50, 52, 53, 54, 100, 101, 102, 203, 204, 205) are inferred from the SI rule plus the constant name; nothing in the repo states them. -->
 
-The `CmdArgs` field for `SET_ANGVEL` is `vec3`, which is verifiable from the SDK reading it
-back: `subscribe_command` yields a `Setpoint` only for commands carrying a `vec3`, and
-`subscribe_setpoint` is shorthand for `subscribe_command(cmd::SET_ANGVEL)`.
+The `CmdArgs` field for `SET_ANGVEL` is `vec3`, verifiable from both ends: `set_angvel`
+builds `CmdArgs::vector(rates)`, and on the way back `subscribe_command` yields a
+`Setpoint` only for commands carrying a `vec3`, with `subscribe_setpoint` as shorthand for
+`subscribe_command(cmd::SET_ANGVEL)`.
 
 > **Not yet.** Seventeen ids above are carried by the schema and acted on by nothing. They
 > publish without error and the state stream does not change, which is indistinguishable
@@ -70,7 +71,7 @@ behaviour of `SET_FW_CTRL_MODE` and `SET_FW_EST_SOURCE`.
 | `FW_ONBOARD_RATE` | 0 | `SET_FW_CTRL_MODE` | the default; the aircraft flies itself on an onboard rate loop tracking `SET_ANGVEL`, with airspeed hold |
 | `FW_DIRECT_SURFACE` | 1 | `SET_FW_CTRL_MODE` | the rate loop is bypassed and the panels take `SET_FW_SURFACES` verbatim |
 | `FW_EST_TRUTH` | 0 | `SET_FW_EST_SOURCE` | the default; the onboard loop uses the simulator's true attitude |
-| `FW_EST_OBSERVER` | 1 | `SET_FW_EST_SOURCE` | the onboard loop uses the attitude published on the robot's `z/estimate` topic |
+| `FW_EST_OBSERVER` | 1 | `SET_FW_EST_SOURCE` | the onboard loop uses the attitude published on the robot's `z/estimate` topic, by `publish_estimate` or any other peer |
 
 `reset()` returns both settings to their defaults, deliberately: direct surface control with
 zeroed latches would relaunch the aircraft unflyable. A direct-surface client re-asserts both

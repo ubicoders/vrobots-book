@@ -3,7 +3,7 @@
 You capture real wire bytes once, check them in, and let `cargo test` decode them with Unity closed.
 
 ```sh
-vrobots record --sys-id 1 -n 5 --prefix state_multirotor
+cargo run -p vrobots-sdk --bin vrobots -- record --sys-id 1 -n 5 --prefix state_multirotor
 ```
 
 That writes `state_multirotor_000.bin` through `state_multirotor_004.bin` into
