@@ -111,13 +111,12 @@ measured[6]      the engine, NEWTONS, not normalised and not a pulse width
 
 That echo is the only receipt for anything on this aircraft, including `set_fw_thrust`.
 
-The setpoint on `z/cmd` arrives in the sender's frame, unconverted. The in-game IMU panel
-stamps the target robot's own frame, which for this aircraft is FRD, so it reads `[p, q, r]`
-in rad/s and is directly subtractable from `kin.ang_vel`. Check the tag rather than assuming
-it. No per-robot-type native `coord_frame_id` is defined in the SDK source, so the frame the
-aircraft publishes in is not documented in the SDK; confirm against a live simulator, and in
-code read `State::coord_frame_id`.
-<!-- VERIFY: the Global Hawk's native coord_frame_id. ex32 describes the aircraft's own frame as FRD; nothing in the SDK source defines a per-robot default. -->
+The aircraft publishes `"frd"`, with `axis_convention` reading `Axes::FRD`, verified live on
+2026-08-09 against simulator v3.0.0. The setpoint on `z/cmd` arrives in the sender's frame,
+unconverted, while the in-game IMU panel stamps the aircraft's own `frd`, so it reads
+`[p, q, r]` in rad/s and is directly subtractable from `kin.ang_vel`. No per-robot-type
+native `coord_frame_id` is defined in the SDK source, so the tag on the snapshot is the
+authority: in code, read `State::coord_frame_id`.
 
 Which sensors it carries is not documented in the SDK; confirm against a live simulator.
 <!-- VERIFY: sensor availability for the GlobalHawk. Nothing in the repository enumerates it. -->

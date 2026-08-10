@@ -23,11 +23,15 @@ From the `examples/rust/src/bin/ex25_frames.rs` header:
 ```text
 device override   (srv/frames, per device)      <- most specific
 robot override    (srv/frames, robot_frame_id)
-robot default     (truck: fru, multirotor: frd -- regardless of the scene)
+robot default     (truck: fru, multirotor: frd, globalhawk: frd -- regardless of the scene)
 scene frame       (scene_frame(); every launch starts at fru)
 ```
 
-<!-- VERIFY: the "robot default" row of that ladder, truck fru and multirotor frd. It comes from the ex25 header and examples/rust/README.md; no per-robot default exists anywhere in the SDK source. -->
+The three robot defaults in that row were measured live against simulator v3.0.0. The
+remaining robot types are unconfirmed, and no per-robot default exists anywhere in the SDK
+source, so read `State::coord_frame_id` off the snapshot rather than assuming a default
+for them.
+<!-- VERIFY: the "robot default" row of that ladder for the robot types other than truck, multirotor and Global Hawk. Those three are live-verified (truck fru, multirotor frd, Global Hawk frd as of 2026-08-09, sim v3.0.0); no per-robot default exists anywhere in the SDK source. -->
 
 `srv/frames` writes the top two levels. The bottom one is read-only from the SDK.
 

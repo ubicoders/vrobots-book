@@ -101,10 +101,11 @@ wins**. `scene_frame()` reads the scene level; `srv/frames` sets the robot and d
 levels. [Coordinate frames](../ch06-services/04-frames-config.md) is the whole
 picture.
 
-The robots do not agree with each other. The truck publishes `"fru"` and the
-multirotor publishes `"frd"`, so the third component is up for one and down for the
-other, and altitude on the multirotor is minus that component.
-<!-- VERIFY: no per-robot frame default exists in the SDK source; confirm against a live sim -->
+The robots do not agree with each other. The truck publishes `"fru"`, while the
+multirotor and the Global Hawk publish `"frd"` (the Global Hawk verified live on
+2026-08-09 against simulator v3.0.0), so the third component is up for one and down
+for the others, and altitude on the multirotor is minus that component.
+<!-- VERIFY: the frames of the robot types other than truck, multirotor and Global Hawk. No per-robot frame default exists in the SDK source, and those three are live-verified (truck fru, multirotor frd, Global Hawk frd); the rest still need a live sim. -->
 
 > **Gotcha.** Two handles in one process is the program where this bites hardest,
 > because a distance between two positions in different frames is silently wrong

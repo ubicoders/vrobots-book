@@ -94,11 +94,10 @@ Everything is SI. Pose (`lin_pos`, `quat`) is world frame and twist and accelera
 `[x, y, z, w]`. Moments of inertia sent through `srv/params` are read in your header frame
 and permuted into the robot's own.
 
-The truck is reported to publish `fru`, where the third component is up, while the
-multirotor publishes `frd`, where it is down. No per-robot-type native `coord_frame_id`
-exists in the SDK source, so this is not documented in the SDK; confirm against a live
-simulator, and in code read `State::coord_frame_id`, which is authoritative.
-<!-- VERIFY: the truck's native coord_frame_id. examples/rust/README.md says fru; nothing in the SDK source defines a per-robot default. -->
+The truck publishes `fru`, where the third component is up, while the multirotor publishes
+`frd`, where it is down. Both were measured live. No per-robot-type native
+`coord_frame_id` exists in the SDK source, so the tag on the snapshot is the authority: in
+code read `State::coord_frame_id`.
 
 Which sensors this vehicle carries is not documented in the SDK; confirm against a live
 simulator. Naming a sensor the robot does not carry is skipped with a simulator log line

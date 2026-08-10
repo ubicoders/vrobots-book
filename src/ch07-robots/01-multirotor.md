@@ -105,10 +105,9 @@ through `ConnectOptions::coord_frame_id` (default `"unity"`), and permuted into 
 own. Read `State::coord_frame_id` for the frame the robot publishes in; it is
 authoritative.
 
-The multirotor is reported to publish `frd`, but no per-robot-type native `coord_frame_id`
-exists in the SDK source; this is not documented in the SDK, so confirm against a live
-simulator.
-<!-- VERIFY: the multirotor's native coord_frame_id. examples/rust/README.md says frd; nothing in the SDK source defines a per-robot default. -->
+The multirotor publishes `frd`, measured live. No per-robot-type native `coord_frame_id`
+exists in the SDK source, so the tag on the snapshot is the authority: read
+`State::coord_frame_id` in code.
 
 Which sensors this airframe carries is not documented in the SDK; confirm against a live
 simulator. `SensorConfig` only guarantees that naming a sensor the robot does not carry is
