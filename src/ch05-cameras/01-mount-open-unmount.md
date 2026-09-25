@@ -34,6 +34,10 @@ and none of that is worth paying for a picture the robot is already publishing.
 
 The signatures, from `crates/vrobots-sdk/src/robot.rs`:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 fn mount_camera(&self, name: &str, resolution: &str, format: &str) -> VrResult<CameraStream>
 fn mount_camera_with(&self, name: &str, resolution: &str, format: &str, options: &CameraOptions) -> VrResult<CameraStream>
@@ -42,8 +46,10 @@ fn unmount_camera(&self, name: &str) -> VrResult<()>
 fn mounted_cameras(&self) -> Vec<CameraSpec>
 ```
 
-<details>
-<summary>The same in C++ (<code>cpp/include/vrobots_sdk.hpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`cpp/include/vrobots_sdk.hpp`:
 
 ```cpp
 [[nodiscard]] CameraStream mount_camera(const std::string& name,
@@ -57,10 +63,10 @@ void unmount_camera(const std::string& name)
 [[nodiscard]] std::vector<std::array<std::string, 3>> mounted_cameras() const
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>crates/vrobots-sdk-py/python/vrsdk/_vrsdk.pyi</code>)</summary>
+`crates/vrobots-sdk-py/python/vrsdk/_vrsdk.pyi`:
 
 ```python
 def mount_camera(
@@ -83,7 +89,8 @@ def unmount_camera(self, name: str) -> None: ...
 def mounted_cameras(self) -> list[CameraSpec]: ...
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Four verbs in Rust, three in the bindings: `mount_camera_with` has no counterpart, because
 C++ takes the options as an optional fourth argument and Python takes them as keyword-only
@@ -132,6 +139,10 @@ Anything still holding the old handle is reading a service that no longer exists
 
 From `examples/rust/src/bin/ex17_camera_pose.rs`, the one example that mounts:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 let robot = VirtualRobot::connect(RobotType::Multirotor, Some(SYS_ID))?;
 
@@ -147,8 +158,10 @@ let cam = robot.mount_camera_with(CAMERA, RESOLUTION, FORMAT, &options)?;
 println!("camera stream: {}", cam.service_name());
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex17_camera_pose.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex17_camera_pose.cpp`:
 
 ```cpp
 vrsdk::VirtualRobot robot(vrsdk::RobotType::Multirotor, SYS_ID);
@@ -158,10 +171,10 @@ vrsdk::CameraStream cam = robot.mount_camera(CAMERA, RESOLUTION, FORMAT, &option
 std::printf("camera stream: %s\n", cam.service_name().c_str());
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex17_camera_pose.py</code>)</summary>
+`examples/python/ex17_camera_pose.py`:
 
 ```python
 mr = VirtualRobot(RobotType.MULTIROTOR, sys_id=SYS_ID)
@@ -181,7 +194,8 @@ cam = mr.mount_camera(
 print(f"camera stream: {cam.service_name}")
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 `service_name` is a method in Rust and C++ and a property in Python, and it reports the same
 string in all three.
@@ -212,6 +226,10 @@ Those are the cameras every camera example reads.
 
 From `examples/rust/src/bin/ex13_open_camera.rs`, opening with the failure spelled out:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 let cam = match robot.open_camera(CAMERA, RESOLUTION, FORMAT) {
     Ok(cam) => cam,
@@ -230,8 +248,10 @@ let cam = match robot.open_camera(CAMERA, RESOLUTION, FORMAT) {
 };
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex13_open_camera.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex13_open_camera.cpp`:
 
 ```cpp
 vrsdk::CameraStream cam;
@@ -252,10 +272,10 @@ try {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex13_open_camera.py</code>)</summary>
+`examples/python/ex13_open_camera.py`:
 
 ```python
 try:
@@ -274,7 +294,8 @@ except vrsdk.VrError as e:
     return
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The missing publisher is a timeout in every surface, so it is caught the same way it is on
 `wait_new_state`: branch on the code, re-raise anything else. C++ pays one extra line for

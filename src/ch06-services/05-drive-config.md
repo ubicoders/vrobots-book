@@ -58,7 +58,11 @@ There is nothing to read back, so `ex26` drives the same full-left circle four t
 compares the steady turn radius, `speed / yaw_rate`. A steering limit that halves must roughly
 double the radius, or the request did not land.
 
-From `examples/rust/src/bin/ex26_drive_config.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex26_drive_config.rs`:
 
 ```rust
     // ===== run 2: half the steering =====
@@ -70,8 +74,10 @@ From `examples/rust/src/bin/ex26_drive_config.rs`:
     let clamped = circle(&robot, "max_steer_deg = 90 -> clamped to 60")?;
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex26_drive_config.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex26_drive_config.cpp`:
 
 ```cpp
 // ===== run 2: half the steering =====
@@ -93,10 +99,10 @@ const Circle narrow = circle(robot, "max_steer_deg = 15");
 const Circle clamped = circle(robot, "max_steer_deg = 90 -> clamped to 60");
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex26_drive_config.py</code>)</summary>
+`examples/python/ex26_drive_config.py`:
 
 ```python
 # ===== run 2: half the steering =====
@@ -108,7 +114,8 @@ robot.configure_drive(max_steer_deg=90.0)
 clamped = circle(robot, "max_steer_deg = 90 -> clamped to 60")
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 One field costs one call in Rust and Python and three lines in C++, because the C++ surface is a
 plain struct: take an empty request from `vrsdk::drive_config()`, then set the value and its
@@ -133,6 +140,10 @@ the only witness.
 
 Run 4 fills in every field, including the factory band restated explicitly.
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     robot.configure_drive(
         &DriveConfig::default()
@@ -148,8 +159,10 @@ Run 4 fills in every field, including the factory band restated explicitly.
     )?;
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex26_drive_config.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex26_drive_config.cpp`:
 
 ```cpp
 // ===== run 4: rear-wheel drive, softer motor, factory band restated ====
@@ -176,10 +189,10 @@ Run 4 fills in every field, including the factory band restated explicitly.
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex26_drive_config.py</code>)</summary>
+`examples/python/ex26_drive_config.py`:
 
 ```python
 # ===== run 4: rear-wheel drive, softer motor, factory band restated =====
@@ -196,7 +209,8 @@ robot.configure_drive(
 )
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The pulse-width band is the one member that is written whole on every surface, because all four
 numbers travel as a group: `PwmBand::new(...)` in Rust, `PwmBand(...)` in Python, and a braced

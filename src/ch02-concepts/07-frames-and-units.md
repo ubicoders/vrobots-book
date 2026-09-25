@@ -23,14 +23,20 @@ is never a control problem and it is occasionally an equality-comparison problem
 
 The declaration is the argument. From `crates/vrobots-sdk/src/state.rs`:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
 pub struct Axes(pub i32);
 ```
 
-<details>
-<summary>The same in C++ (<code>crates/vrobots-sdk-capi/include/vrobots_sdk.h</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`crates/vrobots-sdk-capi/include/vrobots_sdk.h`:
 
 ```c
 /**
@@ -40,10 +46,10 @@ pub struct Axes(pub i32);
 typedef int32_t vrsdk_axes_t;
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>crates/vrobots-sdk-py/python/vrsdk/_vrsdk.pyi</code>)</summary>
+`crates/vrobots-sdk-py/python/vrsdk/_vrsdk.pyi`:
 
 ```python
 class State:
@@ -55,7 +61,8 @@ class State:
 def axes_name(value: int) -> str: ...
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The openness survives every binding. C++ gets a `typedef` over `int32_t` rather than an
 `enum class`, which is the same decision for the same reason, and Python reports it as a

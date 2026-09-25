@@ -7,6 +7,10 @@ The four steps behind a create, why only one of them is sent once, and every opt
 There is one entry point, and a second that takes options. The two signatures, from
 `crates/vrobots-sdk/src/robot.rs`:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 pub fn connect(robot_type: RobotType, sys_id: Option<u32>) -> VrResult<VirtualRobot>
 
@@ -17,8 +21,10 @@ pub fn connect_with(
 ) -> VrResult<VirtualRobot>
 ```
 
-<details>
-<summary>The same in C++ (<code>cpp/include/vrobots_sdk.hpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`cpp/include/vrobots_sdk.hpp`:
 
 ```cpp
 explicit VirtualRobot(RobotType type, std::uint32_t sys_id,
@@ -30,10 +36,10 @@ explicit VirtualRobot(RobotType type, std::uint32_t sys_id,
 void connect()
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>crates/vrobots-sdk-py/python/vrsdk/_vrsdk.pyi</code>)</summary>
+`crates/vrobots-sdk-py/python/vrsdk/_vrsdk.pyi`:
 
 ```python
 class VirtualRobot:
@@ -58,7 +64,8 @@ class VirtualRobot:
     def connect(self) -> None: ...
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The three surfaces split the same work differently. Rust folds construction and connection
 into one call and takes options as a second entry point; C++ and Python construct first and
@@ -162,6 +169,10 @@ documented defaults. It is `#[non_exhaustive]`, so build it with
 The three most commonly changed, chained. From the doctest on `ConnectOptions` in
 `crates/vrobots-sdk/src/options.rs`:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 let opts = ConnectOptions::default()
     .with_router("tcp/192.168.1.10:7447")   // sim on another machine
@@ -169,8 +180,10 @@ let opts = ConnectOptions::default()
     .with_probe_timeout(Duration::from_secs(20));
 ```
 
-<details>
-<summary>The same in C++ (the pattern from <code>examples/cpp/ex30_hello_halfdrone.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+The pattern from `examples/cpp/ex30_hello_halfdrone.cpp`:
 
 ```cpp
 vrsdk_connect_options_t options{};
@@ -181,10 +194,10 @@ vrsdk::VirtualRobot robot(vrsdk::RobotType::HalfDrone, sys_id, &options);
 robot.connect();
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (constructor keywords, listed in full above)</summary>
+Constructor keywords, listed in full above:
 
 ```python
 mr = VirtualRobot(
@@ -196,7 +209,8 @@ mr = VirtualRobot(
 )
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The table above is the reference for all three, with two spelling changes. C++ carries the
 plain C struct, so the fields are `router_endpoint`, `connect_timeout_s`, `probe_timeout_s`

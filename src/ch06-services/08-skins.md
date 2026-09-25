@@ -40,7 +40,11 @@ single place in this API surface where a service says no.
 transient, so the answer will not change. `ex23` treats it as final and stops walking the list
 rather than asking four more times.
 
-From `examples/rust/src/bin/ex23_skins.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex23_skins.rs`:
 
 ```rust
     match robot.set_skin(skin) {
@@ -54,8 +58,10 @@ From `examples/rust/src/bin/ex23_skins.rs`:
     }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex23_skins.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex23_skins.cpp`:
 
 ```cpp
 try {
@@ -72,10 +78,10 @@ try {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex23_skins.py</code>)</summary>
+`examples/python/ex23_skins.py`:
 
 ```python
 try:
@@ -90,7 +96,8 @@ except vrsdk.VrError as e:
     return False
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Rust matches the `VrError::Service` variant and hands every other variant back to the caller. C++
 and Python have one error type each, so they catch it, compare the code against `VRSDK_ERR_SERVICE`
@@ -115,14 +122,20 @@ An unknown key on a robot that has a catalog is acked `ok` and dropped with a lo
 client can see. So is a key from another robot's catalog. `ex23` demonstrates both, after
 walking the five real truck keys:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     println!("\n-- keys that are acked `ok` and dropped inside the simulator --");
     wear(&robot, WRONG_TYPE_SKIN)?; // a multirotor key, on a truck
     wear(&robot, UNKNOWN_SKIN)?; // no catalog has it
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex23_skins.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex23_skins.cpp`:
 
 ```cpp
 std::printf("\n-- keys that are acked `ok` and dropped inside the simulator --\n");
@@ -130,10 +143,10 @@ wear(robot, WRONG_TYPE_SKIN);  // a multirotor key, on a truck
 wear(robot, UNKNOWN_SKIN);     // no catalog has it
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex23_skins.py</code>)</summary>
+`examples/python/ex23_skins.py`:
 
 ```python
 print("\n-- keys that are acked `ok` and dropped inside the simulator --")
@@ -141,7 +154,8 @@ wear(robot, WRONG_TYPE_SKIN)  # a multirotor key, on a truck
 wear(robot, UNKNOWN_SKIN)  # no catalog has it
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Rust's `wear` returns a `Result`, so these two calls still carry `?` to propagate a genuine error
 even though the bool is dropped. The C++ and Python helpers return a plain bool and let an
@@ -169,6 +183,10 @@ The wheel colliders travel with the skin prefab, so a swap **rebinds the physics
 | `actuator.measured[0..3]` | the four wheel speeds, FL, FR, RL, RR, in rad/s |
 | `actuator.measured[4]` | the steering servo |
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     for i in 0..HOLD_SAMPLES {
         robot.set_car(STEER_US, THROTTLE_US, Some(BRAKE_US))?;
@@ -189,8 +207,10 @@ The wheel colliders travel with the skin prefab, so a swap **rebinds the physics
     }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex23_skins.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex23_skins.cpp`:
 
 ```cpp
 for (int i = 0; i < HOLD_SAMPLES; ++i) {
@@ -209,10 +229,10 @@ for (int i = 0; i < HOLD_SAMPLES; ++i) {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex23_skins.py</code>)</summary>
+`examples/python/ex23_skins.py`:
 
 ```python
 for i in range(HOLD_SAMPLES):
@@ -232,7 +252,8 @@ for i in range(HOLD_SAMPLES):
     robot.rate(HZ)
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The brake is an `Option` in Rust and a plain number in the other two. Reading the wheel channels
 also differs: Rust and Python slice a growable list, while C++ has a fixed array with a separate
@@ -254,6 +275,10 @@ repeatability: it is a change to the physics rig, not a texture swap.
 
 The name is trimmed before it is checked, so whitespace does not sneak past.
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     match robot.set_skin("   ") {
         Ok(()) => println!("\nUNEXPECTED: an empty key was accepted"),
@@ -261,8 +286,10 @@ The name is trimmed before it is checked, so whitespace does not sneak past.
     }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex23_skins.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex23_skins.cpp`:
 
 ```cpp
 try {
@@ -273,10 +300,10 @@ try {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex23_skins.py</code>)</summary>
+`examples/python/ex23_skins.py`:
 
 ```python
 try:
@@ -286,7 +313,8 @@ except vrsdk.VrError as e:
     print(f"\nempty key -> [{e.code} {e.kind}] {e.detail}")
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The error carries the same code and message everywhere, but you read it differently: `e.code()`
 with `e.detail()` in Rust, `e.code()` with `e.what()` in C++, and the attributes `e.code`,

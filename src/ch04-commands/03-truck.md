@@ -14,6 +14,10 @@ python examples/python/ex05_hello_car.py
 `examples/rust/src/bin/ex05_hello_car.rs` is the same loop shape as the multirotor example
 with a different actuator in it:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 use vrobots_sdk::{RobotType, VirtualRobot, VrError};
 
@@ -49,8 +53,10 @@ fn main() -> Result<(), VrError> {
 }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex05_hello_car.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex05_hello_car.cpp`:
 
 ```cpp
 constexpr std::uint32_t SYS_ID = 0;      // the truck in the test scene
@@ -98,10 +104,10 @@ int main() {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex05_hello_car.py</code>)</summary>
+`examples/python/ex05_hello_car.py`:
 
 ```python
 SYS_ID = 0  # the truck in the test scene
@@ -135,7 +141,8 @@ def main() -> None:
         car.rate(HZ)
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The echo at the end of each line is the three channels coming back in the order they were
 sent:
@@ -146,21 +153,27 @@ State t=<seconds> pos=(<x>,<y>,<z>) speed=<m/s> echo=[1400, 1650, 1100]
 
 ## The signature
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 pub fn set_car(&self, steer: f64, throttle: f64, brake: Option<f64>) -> VrResult<()>
 ```
 
-<details>
-<summary>The same in C++ (<code>cpp/include/vrobots_sdk.hpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`cpp/include/vrobots_sdk.hpp`:
 
 ```cpp
 void set_car(double steer, double throttle, std::optional<double> brake = std::nullopt)
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>crates/vrobots-sdk-py/python/vrsdk/_vrsdk.pyi</code>)</summary>
+`crates/vrobots-sdk-py/python/vrsdk/_vrsdk.pyi`:
 
 ```python
 def set_car(
@@ -168,7 +181,8 @@ def set_car(
 ) -> None: ...
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The optional third argument is optional in the type system of all three, and C++ and Python
 also default it, so `set_car(steer, throttle)` is the two-channel form there.

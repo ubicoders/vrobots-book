@@ -50,7 +50,11 @@ inspection.
 beside a non-zero `decode_errors` is the actual reason, and it is almost always schema
 drift between your build and the simulator's.
 
-From `examples/rust/src/bin/ex12_version_info.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex12_version_info.rs`:
 
 ```rust
 let stats = robot.stats();
@@ -78,8 +82,10 @@ match robot.last_error() {
 }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex12_version_info.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex12_version_info.cpp`:
 
 ```cpp
 const vrsdk_state_stats_t st = robot.stats();
@@ -104,10 +110,10 @@ if (const std::optional<vrsdk::Error> e = robot.last_error()) {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex12_version_info.py</code>)</summary>
+`examples/python/ex12_version_info.py`:
 
 ```python
 st = mr.stats
@@ -130,7 +136,8 @@ else:
     print(f"  last_error: [{err.code} {err.kind}] {err.detail}")
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The five counters carry the same names everywhere. The absence is spelled three ways for the
 same reason: it is an optional, not an error. Rust returns `Option<VrError>`, C++ returns
@@ -164,7 +171,11 @@ a data read alone.
 Two things do detect it: `elapsed` (or `seq`) ceasing to advance, and a `Timeout` from
 `wait_new_state`. The second is the deliberate one.
 
-From `examples/rust/src/bin/ex19_robust_loop.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex19_robust_loop.rs`:
 
 ```rust
 Err(VrError::Timeout(_)) => {
@@ -191,8 +202,10 @@ Err(VrError::Timeout(_)) => {
 }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex19_robust_loop.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex19_robust_loop.cpp`:
 
 ```cpp
 if (timed_out) {
@@ -222,10 +235,10 @@ if (timed_out) {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex19_robust_loop.py</code>)</summary>
+`examples/python/ex19_robust_loop.py`:
 
 ```python
 if healthy:
@@ -248,7 +261,8 @@ mr.set_mr_pwm([PWM_US] * 4)
 continue
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Each surface measures the outage with its own monotonic clock: `Instant`, `steady_clock` and
 `time.perf_counter`. The SDK does not supply one, because `elapsed` is the simulator's clock

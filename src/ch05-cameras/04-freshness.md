@@ -23,14 +23,20 @@ once. Polling `fresh()` at 100 Hz against a 60 fps stream returns a frame about 
 second and `None` the rest of the time, which is the shape of the loop in
 `ex03_hello_image`:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 if let Some(frame) = cam.fresh() {
     // Some only if new since the last read
     seen += 1;
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex03_hello_image.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex03_hello_image.cpp`:
 
 ```cpp
 // A value only if new since the last read.
@@ -38,10 +44,10 @@ if (auto frame = cam.fresh()) {
     ++seen;
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex03_hello_image.py</code>)</summary>
+`examples/python/ex03_hello_image.py`:
 
 ```python
 if cam.fresh:
@@ -50,7 +56,8 @@ if cam.fresh:
     seen += 1
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Python is the one that splits the question from the answer. `cam.fresh` is a boolean
 property that asks, and `cam.image` or `cam.read()` is what consumes the freshness; a loop
@@ -70,6 +77,10 @@ line, and it will not steal a frame from the thread doing the real work.
 body runs exactly once per rendered frame with no polling at all. From
 `examples/rust/src/bin/ex13_open_camera.rs`:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 let mut seen = 0u64;
 while seen < FRAMES {
@@ -81,8 +92,10 @@ while seen < FRAMES {
     seen += 1;
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex13_open_camera.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex13_open_camera.cpp`:
 
 ```cpp
 std::uint64_t seen = 0;
@@ -104,10 +117,10 @@ while (seen < FRAMES) {
     ++seen;
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex13_open_camera.py</code>)</summary>
+`examples/python/ex13_open_camera.py`:
 
 ```python
 seen = 0
@@ -126,7 +139,8 @@ while seen < FRAMES:
     seen += 1
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 `wait_new_frame` takes seconds as a `double` in C++ and Python where Rust takes a `Duration`,
 and the timeout is the same status rather than a failure in all three. Note the second

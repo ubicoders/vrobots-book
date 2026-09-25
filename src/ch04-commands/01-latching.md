@@ -24,6 +24,10 @@ The practical consequence appears in every loop that waits for state. From
 `examples/rust/src/bin/ex29_hello_cartpole.rs`, the response to a stalled state stream is
 to do nothing at all:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
         if let Err(VrError::Timeout(_)) = robot.wait_new_state(SAMPLE_TIMEOUT) {
             println!("no new state -- holding the last force (it latches)");
@@ -31,8 +35,10 @@ to do nothing at all:
         }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex29_hello_cartpole.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex29_hello_cartpole.cpp`:
 
 ```cpp
 } catch (const vrsdk::Error& e) {
@@ -44,10 +50,10 @@ to do nothing at all:
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex29_hello_cartpole.py</code>)</summary>
+`examples/python/ex29_hello_cartpole.py`:
 
 ```python
 except vrsdk.VrError as e:
@@ -57,7 +63,8 @@ except vrsdk.VrError as e:
     continue
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Skipping the iteration is not a lost command. The previous force is still applied, so
 holding is the correct response to silence rather than a degraded one.
@@ -68,6 +75,10 @@ There is no "stop" verb. To stop pushing, send zero. From
 `examples/rust/src/bin/ex28_hello_msd.rs`, where the step force has to be explicitly
 withdrawn before the plant can ring back to equilibrium:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     // Release. The force LATCHES, so this zero is not optional.
     println!("   release (set_msd_force(0.0)) -- watch it ring back to equilibrium");
@@ -75,8 +86,10 @@ withdrawn before the plant can ring back to equilibrium:
         robot.set_msd_force(0.0)?;
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex28_hello_msd.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex28_hello_msd.cpp`:
 
 ```cpp
 // Release. The force LATCHES, so this zero is not optional.
@@ -85,10 +98,10 @@ for (int i = 0; i < RELEASE_SAMPLES; ++i) {
     robot.set_msd_force(0.0);
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex28_hello_msd.py</code>)</summary>
+`examples/python/ex28_hello_msd.py`:
 
 ```python
 # Release. The force LATCHES, so this zero is not optional.
@@ -97,7 +110,8 @@ for i in range(RELEASE_SAMPLES):
     robot.set_msd_force(0.0)
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Leaving that call out does not "let the force fade": the mass sits pushed against its
 spring forever, and the printout looks like a plant that will not settle.
@@ -123,6 +137,10 @@ spring forever, and the printout looks like a plant that will not settle.
 `examples/rust/src/bin/ex31_globalhawk_direct.rs` demonstrates the property directly by
 sending one pose and then sending nothing for roughly two seconds:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     // ===== latching, and no watchdog =====
     println!("\n-- nothing sent for ~2 s --");
@@ -143,8 +161,10 @@ sending one pose and then sending nothing for roughly two seconds:
     println!("  unchanged. A command is a setpoint; there is no failsafe behind it.");
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex31_globalhawk_direct.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex31_globalhawk_direct.cpp`:
 
 ```cpp
 // ===== latching, and no watchdog =====
@@ -161,10 +181,10 @@ for (int i = 0; i < HOLD_SAMPLES; ++i) {
 std::printf("  unchanged. A command is a setpoint; there is no failsafe behind it.\n");
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex31_globalhawk_direct.py</code>)</summary>
+`examples/python/ex31_globalhawk_direct.py`:
 
 ```python
 # ===== latching, and no watchdog =====
@@ -178,7 +198,8 @@ for i in range(HOLD_SAMPLES):
 print("  unchanged. A command is a setpoint; there is no failsafe behind it.")
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Each printed line has the shape below, and the point of the passage is that the panel
 numbers in successive lines are identical while nothing is being published:

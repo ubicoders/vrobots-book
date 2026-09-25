@@ -39,6 +39,10 @@ Both return `VrError::Deleted` if the robot was deleted and `VrError::Session` i
 not declare the subscriber. Subscribe before you take the aircraft, so an input during the
 handover is not missed:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     // Subscribe BEFORE taking the aircraft: a stick input during the handover
     // would otherwise be missed, and the loop would start from "no setpoint".
@@ -53,8 +57,10 @@ handover is not missed:
     );
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex32_fw_rate_controller.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex32_fw_rate_controller.cpp`:
 
 ```cpp
 // Subscribe BEFORE taking the aircraft: a stick input during the
@@ -67,10 +73,10 @@ std::printf(
     robot.sys_id(), setpoints.key().c_str(), setpoints.cmd_id(), OWN_SRC_ID);
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex32_fw_rate_controller.py</code>)</summary>
+`examples/python/ex32_fw_rate_controller.py`:
 
 ```python
 own_src_id = robot.options["src_id"]
@@ -85,7 +91,8 @@ print(
 )
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Knowing your own `src_id` is where the surfaces diverge, and it matters here because it is
 how you filter your own traffic off the bus. Rust and Python can read the options back
@@ -123,6 +130,10 @@ which for a fixed wing is FRD, so it reads as `[p, q, r]`.
 Everything anyone sends to the robot arrives on this stream, your own commands included.
 Compare `Setpoint::src_id` against `ConnectOptions::src_id`, which defaults to 122:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
         // --- the setpoint: latched, so read the current one every iteration ---
         let setpoint = setpoints.latest();
@@ -132,8 +143,10 @@ Compare `Setpoint::src_id` against `ConnectOptions::src_id`, which defaults to 1
             Some(sp) => {
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex32_fw_rate_controller.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex32_fw_rate_controller.cpp`:
 
 ```cpp
 // --- the setpoint: latched, so read the current one every iteration
@@ -148,10 +161,10 @@ if (setpoint && setpoint->src_id() != OWN_SRC_ID) {
     demand[2] = value[2];
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex32_fw_rate_controller.py</code>)</summary>
+`examples/python/ex32_fw_rate_controller.py`:
 
 ```python
 # --- the setpoint: latched, so read the current one every iteration ---
@@ -164,7 +177,8 @@ else:
     demand = setpoint.value
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Two absences collapse into one test in every surface: no setpoint has ever arrived, and the
 only setpoint is your own echo. Both mean "hold zero rates" here. Note that `latest` is a

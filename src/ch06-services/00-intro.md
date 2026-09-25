@@ -58,7 +58,11 @@ Because of that, the examples in this chapter measure rather than assert. `ex27`
 point deliberately by sending a rotor list one entry short, with a thrust curve that would
 drop the aircraft out of the sky.
 
-From `examples/rust/src/bin/ex27_rotor_config.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex27_rotor_config.rs`:
 
 ```rust
     robot.configure_rotors(&short)?;
@@ -66,8 +70,10 @@ From `examples/rust/src/bin/ex27_rotor_config.rs`:
     let dropped = climb(&robot, "after the short list", &collective)?;
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex27_rotor_config.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex27_rotor_config.cpp`:
 
 ```cpp
 robot.configure_rotors(shortlist);
@@ -76,10 +82,10 @@ std::printf("... returned without throwing. That is a receipt, and the request w
 const Run dropped = climb(robot, "after the short list", collective);
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex27_rotor_config.py</code>)</summary>
+`examples/python/ex27_rotor_config.py`:
 
 ```python
 robot.configure_rotors(short)
@@ -87,7 +93,8 @@ print("... returned without raising. That is a receipt, and the request was drop
 dropped = climb(robot, "after the short list", collective)
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Each surface reports failure differently, and that is exactly what makes the point here: the
 Rust `?`, the C++ `catch` and the Python `except` all stay quiet, because a dropped request

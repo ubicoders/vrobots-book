@@ -57,7 +57,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     `.mdbook-tabs-container[data-tabglobal="${global}"]`
                 );
                 for (const globalContainer of globalContainers) {
-                    changeTab(globalContainer, name);
+                    if (globalContainer.querySelector(`.mdbook-tab[data-tabname="${name}"]`)) {
+                        changeTab(globalContainer, name);
+                    }
                 }
             }
         });
@@ -68,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const global = container.dataset.tabglobal;
 
         const name = localStorage.getItem(`mdbook-tabs-${global}`);
-        if (name && document.querySelector(`.mdbook-tab[data-tabname="${name}"]`)) {
+        if (name && container.querySelector(`.mdbook-tab[data-tabname="${name}"]`)) {
             changeTab(container, name);
         }
     }

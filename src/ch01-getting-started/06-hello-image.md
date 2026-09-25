@@ -15,7 +15,11 @@ images does not start with creating a camera: it starts with attaching to one of
 `open_camera` opens the iceoryx2 subscriber and touches the simulator not at all. The name,
 resolution and format are constants, as they are in every example.
 
-From `examples/rust/src/bin/ex03_hello_image.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex03_hello_image.rs`:
 
 ```rust
 const SYS_ID: u32 = 1; // the multirotor in the test scene
@@ -40,8 +44,10 @@ fn main() -> Result<(), VrError> {
     let mut seen = 0u64;
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex03_hello_image.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex03_hello_image.cpp`:
 
 ```cpp
 constexpr std::uint32_t SYS_ID = 1;  // the multirotor in the test scene
@@ -68,10 +74,10 @@ int main() {
         std::uint64_t seen = 0;
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex03_hello_image.py</code>)</summary>
+`examples/python/ex03_hello_image.py`:
 
 ```python
 SYS_ID = 1  # the multirotor in the test scene
@@ -98,7 +104,8 @@ def main() -> None:
     seen = 0
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The printed name is the iceoryx2 service, and it matches a row of `vrobots topic list`
 character for character:
@@ -117,6 +124,10 @@ it only when the pair the robot ships cannot serve you.
 Images and states are two independent streams. The image half of the loop runs once per
 frame while the state half runs every iteration, and the code says which by branching on
 `fresh()`.
+
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
 
 ```rust
     // ===== loop =====
@@ -139,8 +150,10 @@ frame while the state half runs every iteration, and the code says which by bran
             );
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex03_hello_image.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex03_hello_image.cpp`:
 
 ```cpp
         // ===== loop =====
@@ -157,10 +170,10 @@ frame while the state half runs every iteration, and the code says which by bran
                             static_cast<double>(s.t_ns - frame->t_ns()) / 1e6);
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex03_hello_image.py</code>)</summary>
+`examples/python/ex03_hello_image.py`:
 
 ```python
     # ===== loop =====
@@ -181,7 +194,8 @@ frame while the state half runs every iteration, and the code says which by bran
             )
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Rust and C++ ask and receive in one move, so the frame arrives inside an `Option` that the
 `if` unwraps. Python splits it: `cam.fresh` is a boolean property and `cam.image` is the
@@ -221,6 +235,10 @@ There is no unmount at the end, and that is the point of opening rather than mou
 handle never created a camera, so it has nothing to remove; letting the stream go ends this
 subscription and `front_left` keeps rendering and publishing for everyone else.
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     // Nothing to unmount: this handle never created a camera. Dropping the stream
     // ends this subscription only -- front_left keeps rendering and publishing for
@@ -234,8 +252,10 @@ subscription and `front_left` keeps rendering and publishing for everyone else.
 }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex03_hello_image.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex03_hello_image.cpp`:
 
 ```cpp
         // Nothing to unmount: this handle never created a camera. Letting the
@@ -250,10 +270,10 @@ subscription and `front_left` keeps rendering and publishing for everyone else.
         return 0;
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex03_hello_image.py</code>)</summary>
+`examples/python/ex03_hello_image.py`:
 
 ```python
     # Nothing to unmount: this handle never created a camera. Letting the stream
@@ -266,7 +286,8 @@ subscription and `front_left` keeps rendering and publishing for everyone else.
     )
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 ```text
 120 frame(s), received=120 decode_errors=0 seq_gaps=0

@@ -41,6 +41,10 @@ for them.
 than robot scope: the answer is the same for every robot loaded, and the method uses this
 robot's session only because that is where the wire is.
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     let scene = robot.scene_frame()?;
     println!(
@@ -51,8 +55,10 @@ robot's session only because that is where the wire is.
     );
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex25_frames.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex25_frames.cpp`:
 
 ```cpp
 const vrsdk::SceneFrame scene = robot.scene_frame();
@@ -60,10 +66,10 @@ std::printf("scene frame: \"%s\" (axis_convention %d)\n", scene.coord_frame_id.c
             scene.axis_convention);
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex25_frames.py</code>)</summary>
+`examples/python/ex25_frames.py`:
 
 ```python
 scene = robot.scene_frame()
@@ -73,7 +79,8 @@ print(
 )
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The query is the same everywhere; what you can print of the answer is not. Rust reads the enum
 tag's name through `Axes::name()` and Python through `axis_convention_name`, while in C++
@@ -123,7 +130,11 @@ Device names are matched exactly, case included, and live in the `device` module
 > **Gotcha.** The device the frames service matches is `gps`, while the block it moves is
 > called `gnss` in the state message. Use the constants rather than a literal.
 
-From `examples/rust/src/bin/ex25_frames.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex25_frames.rs`:
 
 ```rust
     robot.set_frames(
@@ -140,8 +151,10 @@ From `examples/rust/src/bin/ex25_frames.rs`:
     )?;
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex25_frames.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex25_frames.cpp`:
 
 ```cpp
 robot.set_frames("frd",
@@ -159,10 +172,10 @@ robot.set_frames("frd",
                  });
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex25_frames.py</code>)</summary>
+`examples/python/ex25_frames.py`:
 
 ```python
 robot.set_frames(
@@ -179,7 +192,8 @@ robot.set_frames(
 )
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The device names and `INHERIT_FRAME` are spelled the same in all three. Only the entry
 differs: C++ brace-initialises each pair inline, Python constructs a `DeviceFrame`, and Rust
@@ -203,6 +217,10 @@ still reporting in the old frame.
 
 Passing `INHERIT_FRAME` at both levels puts everything back where it started.
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     robot.set_frames(
         Some(INHERIT_FRAME),
@@ -210,18 +228,20 @@ Passing `INHERIT_FRAME` at both levels puts everything back where it started.
     )?;
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex25_frames.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex25_frames.cpp`:
 
 ```cpp
 robot.set_frames(vrsdk::INHERIT_FRAME,
                  {{vrsdk::device::GYROSCOPE, vrsdk::INHERIT_FRAME}});
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex25_frames.py</code>)</summary>
+`examples/python/ex25_frames.py`:
 
 ```python
 robot.set_frames(
@@ -230,7 +250,8 @@ robot.set_frames(
 )
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 `INHERIT_FRAME` clears an override on every surface. What differs is how each says "leave the
 robot's level alone": `None` in Rust and Python, an empty string in C++, which the binding

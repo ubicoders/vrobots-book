@@ -20,7 +20,11 @@ this handle holds a stream at another is refused with `VrError::InvalidArgument`
 restarting the first stream under a new name behind your back. Format is per camera; only
 resolution is shared.
 
-From `examples/rust/src/bin/ex16_two_cameras.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex16_two_cameras.rs`:
 
 ```rust
 // Two subscriptions, no mutation: both cameras are already on the robot.
@@ -34,8 +38,10 @@ println!(
 );
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex16_two_cameras.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex16_two_cameras.cpp`:
 
 ```cpp
         // Two subscriptions, no mutation: both cameras are already on the robot.
@@ -47,10 +53,10 @@ println!(
                     robot.mounted_cameras().size());
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex16_two_cameras.py</code>)</summary>
+`examples/python/ex16_two_cameras.py`:
 
 ```python
     # Two subscriptions, no mutation: both cameras are already on the robot.
@@ -61,7 +67,8 @@ println!(
     print(f"mounted by this handle: {mr.mounted_cameras()}  <- neither is ours")
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Only the printing differs. `service_name` is a property in Python and a method in the other
 two, and C++ has no `CameraSpec` type, so `mounted_cameras()` there hands back a
@@ -85,6 +92,10 @@ There is no combined "wait for both", by design: the cameras are separate iceory
 and they render on their own schedules. Two `fresh()` calls in one loop are genuinely
 independent, and neither can consume the other's frame.
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 while n_left < FRAMES || n_right < FRAMES {
     // Two consumers, each draining its own stream. Neither call can consume
@@ -94,8 +105,10 @@ while n_left < FRAMES || n_right < FRAMES {
         last_left_ns = f.t_ns;
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex16_two_cameras.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex16_two_cameras.cpp`:
 
 ```cpp
         while (n_left < FRAMES || n_right < FRAMES) {
@@ -106,10 +119,10 @@ while n_left < FRAMES || n_right < FRAMES {
                 last_left_ns = f->t_ns();
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex16_two_cameras.py</code>)</summary>
+`examples/python/ex16_two_cameras.py`:
 
 ```python
     while n_left < FRAMES or n_right < FRAMES:
@@ -121,7 +134,8 @@ while n_left < FRAMES || n_right < FRAMES {
             last_left_ns = f.t_ns
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Rust and C++ take the frame out of an `Option`, so the `if` both tests and binds. Python calls
 `left.read()`, which returns the frame or `None`, and this is the per-stream read that gives
@@ -136,6 +150,10 @@ fps, so most iterations find one stream fresh and the other not.
 The only honest way to relate two frames is to subtract their capture stamps. Both are on
 the same clock, so the difference is a real interval.
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 let skew_ms = if last_left_ns == 0 {
     f64::NAN
@@ -144,8 +162,10 @@ let skew_ms = if last_left_ns == 0 {
 };
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex16_two_cameras.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex16_two_cameras.cpp`:
 
 ```cpp
                     const double skew_ms =
@@ -153,10 +173,10 @@ let skew_ms = if last_left_ns == 0 {
                                           : static_cast<double>(f->t_ns() - last_left_ns) / 1e6;
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex16_two_cameras.py</code>)</summary>
+`examples/python/ex16_two_cameras.py`:
 
 ```python
                 skew_ms = (
@@ -164,7 +184,8 @@ let skew_ms = if last_left_ns == 0 {
                 )
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The subtraction is the same in all three. Only the "no left frame yet" value differs: Rust and
 Python report `NaN`, C++ reports `0.0`, so a C++ reader cannot tell that first row from a
@@ -195,6 +216,10 @@ Hz, and no frame belongs to any state. What they share is the clock: `Frame::t_n
 So fusion code subtracts. From `examples/rust/src/bin/ex03_hello_image.rs`, which reports
 the age of each frame against the state snapshot taken in the same iteration:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 let s = robot.states();
 
@@ -203,8 +228,10 @@ let s = robot.states();
 if let Some(frame) = cam.fresh() {
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex03_hello_image.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex03_hello_image.cpp`:
 
 ```cpp
             const vrsdk::State s = robot.states();
@@ -213,10 +240,10 @@ if let Some(frame) = cam.fresh() {
             if (auto frame = cam.fresh()) {
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex03_hello_image.py</code>)</summary>
+`examples/python/ex03_hello_image.py`:
 
 ```python
         s = mr.states
@@ -227,7 +254,8 @@ if let Some(frame) = cam.fresh() {
             frame = cam.frame  # metadata for the image we are about to read
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Python splits what the other two do in one move: `mr.states` and `cam.fresh` are properties,
 and the frame comes from `cam.frame` after the freshness test rather than out of the test

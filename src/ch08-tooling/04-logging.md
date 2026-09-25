@@ -23,12 +23,18 @@ the equivalent. C++ registers a handler with `vrsdk::set_log_callback` and then 
 One function, and the only thing about it worth memorising is that it can decline to
 act. From `crates/vrobots-sdk/src/lib.rs`:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 pub fn init_logging(filter: &str)
 ```
 
-<details>
-<summary>The same in C++ (<code>cpp/include/vrobots_sdk.hpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`cpp/include/vrobots_sdk.hpp`:
 
 ```cpp
 using LogHandler = void (*)(LogLevel level, const char* target, const char* message);
@@ -38,10 +44,10 @@ inline void set_log_callback(LogHandler handler)
 inline void set_log_level(LogLevel level)
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>crates/vrobots-sdk-py/python/vrsdk/__init__.py</code>)</summary>
+`crates/vrobots-sdk-py/python/vrsdk/__init__.py`:
 
 ```python
 def init_logging(
@@ -51,7 +57,8 @@ def init_logging(
 ) -> None:
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 This is where the three surfaces diverge most. Rust installs a `tracing` subscriber.
 Python has no subscriber to install: importing `vrsdk` already bridges the core's events
@@ -66,7 +73,11 @@ if a subscriber is already installed**. That matters twice: a library must never
 force a global subscriber on its consumer, and calling it a second time from
 somewhere else in your program cannot fight the first call.
 
-From `examples/rust/src/bin/ex20_logging_tour.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex20_logging_tour.rs`:
 
 ```rust
     vrobots_sdk::init_logging(FILTER);
@@ -78,8 +89,10 @@ From `examples/rust/src/bin/ex20_logging_tour.rs`:
     vrobots_sdk::init_logging("error");
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex20_logging_tour.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex20_logging_tour.cpp`:
 
 ```cpp
         // Register BEFORE connecting: connect is the noisiest and most
@@ -91,10 +104,10 @@ From `examples/rust/src/bin/ex20_logging_tour.rs`:
                     vrsdk::to_string(vrsdk::LogLevel::Debug));
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex20_logging_tour.py</code>)</summary>
+`examples/python/ex20_logging_tour.py`:
 
 ```python
     for name in QUIET:
@@ -108,7 +121,8 @@ From `examples/rust/src/bin/ex20_logging_tour.rs`:
     print(f"init_logging({LEVEL!r}) -- SDK records now reach the root handler\n")
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Only Rust's call is idempotent by declining to act. C++ and Python are both last-write-wins:
 a second `set_log_callback` replaces the handler, and a second `init_logging` re-raises the
@@ -168,6 +182,10 @@ shows up. Ignore them and a hang has no explanation.
 The example demonstrates the first channel with an argument that is refused rather
 than clamped:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     match robot.set_mr_pwm([0.7; 4]) {
         // 0.7 is a normalised throttle, not a pulse width. The SDK refuses it
@@ -178,8 +196,10 @@ than clamped:
     }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex20_logging_tour.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex20_logging_tour.cpp`:
 
 ```cpp
         std::printf("\n-- an error is thrown, not logged:\n");
@@ -194,10 +214,10 @@ than clamped:
         }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex20_logging_tour.py</code>)</summary>
+`examples/python/ex20_logging_tour.py`:
 
 ```python
     print("\n-- an error is raised, not logged:")
@@ -212,7 +232,8 @@ than clamped:
         print(f"   err.name({e.code}) == {vrsdk.err.name(e.code)!r}")
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The channel is the same; the delivery is not. Rust returns the refusal as a `Result` you
 match on, while C++ throws `vrsdk::Error` and Python raises `vrsdk.VrError`, so both wrap
@@ -233,6 +254,10 @@ A malformed state payload is neither of the two. It is logged as a warning, coun
 in `stats()`, stored in `last_error()`, and **not** returned from `states()`, because
 one bad frame must not end a flight.
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     let stats = robot.stats();
     println!(
@@ -246,8 +271,10 @@ one bad frame must not end a flight.
     );
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex20_logging_tour.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex20_logging_tour.cpp`:
 
 ```cpp
         const vrsdk_state_stats_t st = robot.stats();
@@ -258,10 +285,10 @@ one bad frame must not end a flight.
         std::printf("last_error=%s\n", err ? err->what() : "none");
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex20_logging_tour.py</code>)</summary>
+`examples/python/ex20_logging_tour.py`:
 
 ```python
     st = mr.stats
@@ -273,7 +300,8 @@ one bad frame must not end a flight.
     )
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 `stats` and `last_error` are methods in Rust and C++ and properties in Python. The absent
 error is `Option` in Rust, `std::optional<vrsdk::Error>` in C++ and `None` in Python, and

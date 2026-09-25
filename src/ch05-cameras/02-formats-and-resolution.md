@@ -50,14 +50,20 @@ bandwidth rather than network, but at 60 fps it is 200 MB/s against 13 MB/s.
 `ex15_camera_formats` opens `front_left` and prices the alternatives against the frames it
 is actually receiving. From `examples/rust/src/bin/ex15_camera_formats.rs`:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 const CAMERA: &str = "front_left"; // every vrobot ships front_left and front_right
 const RESOLUTION: &str = "720p"; // 360p | 720p | 1080p -- robot-wide
 const FORMAT: &str = "rgba8"; // mono8 | rgb8 | rgba8 -- per camera
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex15_camera_formats.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex15_camera_formats.cpp`:
 
 ```cpp
 constexpr const char* CAMERA = "front_left";  // every vrobot ships front_left and front_right
@@ -65,10 +71,10 @@ constexpr const char* RESOLUTION = "720p";    // 360p | 720p | 1080p -- robot-wi
 constexpr const char* FORMAT = "rgba8";       // mono8 | rgb8 | rgba8 -- per camera
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex15_camera_formats.py</code>)</summary>
+`examples/python/ex15_camera_formats.py`:
 
 ```python
 CAMERA = "front_left"  # every vrobot ships front_left and front_right
@@ -76,7 +82,8 @@ RESOLUTION = "720p"  # 360p | 720p | 1080p -- robot-wide
 FORMAT = "rgba8"  # mono8 | rgb8 | rgba8 -- per camera
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The three strings are the stream identity on the wire, so they are literal strings in every
 surface: there is no enum for either, and a typo in one of them is a stream that does not

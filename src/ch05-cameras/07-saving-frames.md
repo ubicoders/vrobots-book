@@ -19,6 +19,10 @@ the camera every vrobot already ships at 720p rgba8, so there is no mount and no
 next frame still has to be rendered. Block for it rather than polling. From
 `examples/rust/src/bin/ex14_camera_save.rs`:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 // open_camera already waited for the stream to exist, but the next frame
 // still has to be rendered. Block for it rather than polling.
@@ -28,8 +32,10 @@ let frame = cam
     .expect("wait_new_frame returned Ok, so one is waiting");
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex14_camera_save.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex14_camera_save.cpp`:
 
 ```cpp
 // ===== the one frame =====
@@ -43,10 +49,10 @@ if (!frame) {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex14_camera_save.py</code>)</summary>
+`examples/python/ex14_camera_save.py`:
 
 ```python
 # ===== the one frame =====
@@ -57,7 +63,8 @@ frame = cam.read()
 assert frame is not None, "wait_new_frame returned, so one is waiting"
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Each surface asserts the same invariant in its own idiom. None of them has any unwinding to
 do: nothing was created, so an early return leaves the simulator exactly as it found it.
@@ -82,6 +89,10 @@ Nothing on this path is padded or compressed.
 A binary PPM (P6) is a short text header followed by the raw RGB bytes, and that is the
 entire format. It needs no image library, and every viewer reads it.
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 /// Write the frame as a binary PPM (P6) -- the simplest image format there is.
 /// Mono8 is expanded to grey RGB; rgba8 drops alpha.
@@ -103,8 +114,10 @@ fn write_ppm(frame: &Frame, path: &str) -> std::io::Result<()> {
 }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex14_camera_save.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex14_camera_save.cpp`:
 
 ```cpp
 /// Write the frame as a binary PPM (P6) -- the simplest image format there is.
@@ -132,10 +145,10 @@ static bool write_ppm(const vrsdk::Frame& frame, const std::string& path) {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex14_camera_save.py</code>)</summary>
+`examples/python/ex14_camera_save.py`:
 
 ```python
 def save(img: np.ndarray, path: str) -> str:
@@ -154,7 +167,8 @@ def save(img: np.ndarray, path: str) -> str:
     return path
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Python writes a PNG through OpenCV when it is installed and falls back to the same PPM when
 it is not, which is why its `OUTPUT` is `frame.png` where the other two are `frame.ppm`. The

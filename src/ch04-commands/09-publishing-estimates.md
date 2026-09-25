@@ -31,6 +31,10 @@ The loop is therefore: read `sensors`, run your filter, publish the result, repe
 
 Both build the same wire message. From `crates/vrobots-sdk/src/robot.rs`:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     pub fn publish_estimate(
         &self,
@@ -40,18 +44,20 @@ Both build the same wire message. From `crates/vrobots-sdk/src/robot.rs`:
     ) -> VrResult<()>
 ```
 
-<details>
-<summary>The same in C++ (<code>cpp/include/vrobots_sdk.hpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`cpp/include/vrobots_sdk.hpp`:
 
 ```cpp
     void publish_estimate(const Quat& quat, std::optional<Vec3> angular_rates = std::nullopt,
                           bool valid = true)
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>crates/vrobots-sdk-py/python/vrsdk/_vrsdk.pyi</code>)</summary>
+`crates/vrobots-sdk-py/python/vrsdk/_vrsdk.pyi`:
 
 ```python
 def publish_estimate(
@@ -62,7 +68,8 @@ def publish_estimate(
 ) -> None: ...
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 C++ and Python default `angular_rates` to none and `valid` to true; Rust asks for all
 three. `publish_estimate_euler(euler, order, angular_rates, valid)` is the same call from
@@ -84,6 +91,10 @@ the simulator's `_Est` cockpit gauges moving.
 ex35 wraps the call in a helper so all four phases publish identically. From
 `examples/rust/src/bin/ex35_publish_estimate.rs`:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     // valid = true throughout. The gyro rates go along for the ride; nothing
     // reads them yet.
@@ -91,8 +102,10 @@ ex35 wraps the call in a helper so all four phases publish identically. From
     Ok(Some(quat))
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex35_publish_estimate.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex35_publish_estimate.cpp`:
 
 ```cpp
 // valid = true throughout. The gyro rates go along for the ride; nothing
@@ -101,10 +114,10 @@ robot.publish_estimate(quat, gyro_of(s), true);
 return quat;
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex35_publish_estimate.py</code>)</summary>
+`examples/python/ex35_publish_estimate.py`:
 
 ```python
     # valid=True throughout. The gyro rates go along for the ride; nothing reads
@@ -113,7 +126,8 @@ return quat;
     return quat
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 It prints nothing of its own and returns once zenoh has accepted the put, exactly like a
 command; the only observable difference is what the aircraft does next.
@@ -126,6 +140,10 @@ trusting it after 0.5 seconds, so a publisher that pauses has handed the aircraf
 truth. Publish it every control iteration, at 20 Hz or better, which is why every loop in
 ex35 pairs one publish with one `rate` call:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     for _ in 0..SETTLE_SAMPLES {
         publish(robot, &robot.states(), estimator)?;
@@ -133,8 +151,10 @@ ex35 pairs one publish with one `rate` call:
     }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex35_publish_estimate.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex35_publish_estimate.cpp`:
 
 ```cpp
 for (int i = 0; i < SETTLE_SAMPLES; ++i) {
@@ -143,10 +163,10 @@ for (int i = 0; i < SETTLE_SAMPLES; ++i) {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex35_publish_estimate.py</code>)</summary>
+`examples/python/ex35_publish_estimate.py`:
 
 ```python
     for _ in range(SETTLE_SAMPLES):
@@ -154,7 +174,8 @@ for (int i = 0; i < SETTLE_SAMPLES; ++i) {
         robot.rate(HZ)
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The example runs at 25 Hz, inside the window, and the settle loop prints nothing; the
 tracking window after it prints one progress line every two seconds.

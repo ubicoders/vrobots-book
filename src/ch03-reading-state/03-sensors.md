@@ -126,7 +126,11 @@ when it is empty, the device is in the robot's frame from the snapshot header.
 The tour example prints each device with its reading, its validity and its own clock
 side by side, which is what makes the differing rates visible.
 
-From `examples/rust/src/bin/ex10_sensors_tour.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex10_sensors_tour.rs`:
 
 ```rust
 println!(
@@ -145,8 +149,10 @@ println!(
 );
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex10_sensors_tour.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex10_sensors_tour.cpp`:
 
 ```cpp
 std::printf("  gnss      lat=%.6f lon=%.6f alt=%.2f m  vel=(%+.3f,%+.3f,%+.3f) m/s (NED)\n",
@@ -159,10 +165,10 @@ stamp(n.gnss.valid, n.gnss.timestamp);
 std::printf("   [slowest device, ~5 Hz]\n");
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex10_sensors_tour.py</code>)</summary>
+`examples/python/ex10_sensors_tour.py`:
 
 ```python
 g = n.gnss.geo_point
@@ -176,7 +182,8 @@ print(
 )
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The device path is the same in all three: `sensors.gnss.geo_point.latitude`, reached through
 `s.raw.sensors` in C++ and `s.sensors` in the other two. So is the `valid` and `timestamp`

@@ -71,7 +71,11 @@ centre of mass gets it subtracted twice. Measure from the robot's origin.
 Positions are read in your header frame, which is `unity` by default: +x right, +y up, +z
 forward, so a flat rotor ring lives in the x-z plane at y = 0. That is how `ex27` lays one out.
 
-From `examples/rust/src/bin/ex27_rotor_config.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex27_rotor_config.rs`:
 
 ```rust
 fn ring(n: usize) -> Vec<RotorSpec> {
@@ -85,8 +89,10 @@ fn ring(n: usize) -> Vec<RotorSpec> {
 }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex27_rotor_config.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex27_rotor_config.cpp`:
 
 ```cpp
 std::vector<vrsdk_rotor_spec_t> ring(std::size_t n) {
@@ -105,10 +111,10 @@ std::vector<vrsdk_rotor_spec_t> ring(std::size_t n) {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex27_rotor_config.py</code>)</summary>
+`examples/python/ex27_rotor_config.py`:
 
 ```python
 def ring(n: int) -> list[RotorSpec]:
@@ -128,7 +134,8 @@ def ring(n: int) -> list[RotorSpec]:
     return out
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Each entry starts from the simulator's own reference rotor on every surface, `RotorSpec::default()`,
 `vrsdk::rotor_spec()` and `RotorSpec()`, because an entry carries no `has_*` flags: a field left at
@@ -149,6 +156,10 @@ spawns and is `actuator.pwm.len()` in the state stream. Read it rather than assu
 anyway. `ex27` proves it by sending one entry too few, with a curve that would put the aircraft
 on the ground:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     let short: Vec<RotorSpec> = ring(rotors.saturating_sub(1))
         .into_iter()
@@ -161,8 +172,10 @@ on the ground:
     robot.configure_rotors(&short)?;
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex27_rotor_config.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex27_rotor_config.cpp`:
 
 ```cpp
 std::vector<vrsdk_rotor_spec_t> shortlist = ring(rotors > 0 ? rotors - 1 : 0);
@@ -176,10 +189,10 @@ std::printf("configure_rotors with %zu entries for %zu rotors ...\n", shortlist.
 robot.configure_rotors(shortlist);
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex27_rotor_config.py</code>)</summary>
+`examples/python/ex27_rotor_config.py`:
 
 ```python
 short = [
@@ -190,7 +203,8 @@ print(f"configure_rotors with {len(short)} entries for {rotors} rotors ...")
 robot.configure_rotors(short)
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Rust sets all three coefficients through one `with_thrust_curve` call, C++ assigns them on each
 struct in place, and Python rebuilds each entry around the position the ring produced. The wire
@@ -211,6 +225,10 @@ The one length the SDK does refuse is zero, which returns `VrError::InvalidArgum
 `ang_vel_intercept` and the commanded pulse width, and nothing else. It is a reported line, not
 a measurement. Run 3 of `ex27` cuts the thrust curve to 70% and leaves that line alone:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     let weak: Vec<RotorSpec> = ring(rotors)
         .into_iter()
@@ -226,8 +244,10 @@ a measurement. Run 3 of `ex27` cuts the thrust curve to 70% and leaves that line
     robot.configure_rotors(&weak)?;
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex27_rotor_config.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex27_rotor_config.cpp`:
 
 ```cpp
 std::vector<vrsdk_rotor_spec_t> weak = ring(rotors);
@@ -240,10 +260,10 @@ for (vrsdk_rotor_spec_t& r : weak) {
 robot.configure_rotors(weak);
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex27_rotor_config.py</code>)</summary>
+`examples/python/ex27_rotor_config.py`:
 
 ```python
 reference = RotorSpec()
@@ -259,7 +279,8 @@ weak = [
 robot.configure_rotors(weak)
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 All three read the reference coefficients back off a fresh default rotor rather than repeating the
 numbers from the table above, so 70% stays 70% of whatever the SDK's reference rotor is. The list

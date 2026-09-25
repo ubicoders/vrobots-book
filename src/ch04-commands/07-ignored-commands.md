@@ -19,6 +19,10 @@ pulse widths. It is the command you would reach for to hover without thinking in
 microseconds, and no robot type acts on it. `examples/rust/src/bin/ex06_hello_throttle.rs`
 is therefore a lesson in what that looks like rather than a way to fly:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     loop {
         // Published exactly like set_mr_pwm: one put on vrobots/<id>/z/cmd, no
@@ -41,8 +45,10 @@ is therefore a lesson in what that looks like rather than a way to fly:
     }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex06_hello_throttle.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex06_hello_throttle.cpp`:
 
 ```cpp
 // ===== loop =====
@@ -71,10 +77,10 @@ for (;;) {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex06_hello_throttle.py</code>)</summary>
+`examples/python/ex06_hello_throttle.py`:
 
 ```python
 # ===== loop =====
@@ -98,7 +104,8 @@ while True:
     mr.rate(HZ)
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The call succeeds in all three and nothing moves in any of them, which is the point of the
 example: an ignored command is indistinguishable from a delivered one at the call site.
@@ -138,6 +145,10 @@ message by hand with [`CmdArgs`](06-generic-cmd.md) does not.
 From `examples/rust/src/bin/ex07_body_wrench.rs`, one verb per iteration so each printed
 line names exactly what went out:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
         let sent = match step % 3 {
             0 => {
@@ -155,8 +166,10 @@ line names exactly what went out:
         };
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex07_body_wrench.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex07_body_wrench.cpp`:
 
 ```cpp
 // One verb per iteration, so each printed line names exactly what
@@ -178,10 +191,10 @@ switch (step % 3) {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex07_body_wrench.py</code>)</summary>
+`examples/python/ex07_body_wrench.py`:
 
 ```python
 # One verb per iteration, so each printed line names exactly what went
@@ -198,7 +211,8 @@ else:
 step += 1
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The three verbs are one for one across the surfaces. C++ takes `std::array<double, 3>` and
 Python takes either three scalars or one sequence; both hide the same schema asymmetry, in

@@ -40,7 +40,11 @@ That leaves exactly one way to confirm that a robot received what you sent: read
 robust-loop example makes the point by printing the echo beside the sequence number in
 its status line.
 
-From `examples/rust/src/bin/ex19_robust_loop.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex19_robust_loop.rs`:
 
 ```rust
 let s = robot.states();
@@ -60,8 +64,10 @@ if samples.is_multiple_of(REPORT_EVERY) {
 }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex19_robust_loop.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex19_robust_loop.cpp`:
 
 ```cpp
 const vrsdk::State s = robot.states();
@@ -78,10 +84,10 @@ if (samples % REPORT_EVERY == 0) {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex19_robust_loop.py</code>)</summary>
+`examples/python/ex19_robust_loop.py`:
 
 ```python
 s = mr.states
@@ -95,7 +101,8 @@ if samples % REPORT_EVERY == 0:
     )
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Rust and Python print `actuator.pwm` as a list; C++ has it as `s.raw.actuator.pwm` with a
 separate `pwm_count`, and `s.pwm()` is the convenience that turns the pair into a

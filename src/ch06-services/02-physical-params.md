@@ -41,7 +41,11 @@ produce a different acceleration, or the change did not land.
 `ex22` therefore flies a fixed 1800 us collective twice, at two different masses, and compares
 the climb rate.
 
-From `examples/rust/src/bin/ex22_physical_params.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex22_physical_params.rs`:
 
 ```rust
     // ===== run 1: light =====
@@ -53,8 +57,10 @@ From `examples/rust/src/bin/ex22_physical_params.rs`:
     let heavy = climb_run(&robot, HEAVY_KG)?;
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex22_physical_params.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex22_physical_params.cpp`:
 
 ```cpp
 // ===== run 1: light =====
@@ -80,10 +86,10 @@ const double light = climb_run(robot, LIGHT_KG);
 const double heavy = climb_run(robot, HEAVY_KG);
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex22_physical_params.py</code>)</summary>
+`examples/python/ex22_physical_params.py`:
 
 ```python
 # ===== run 1: light =====
@@ -95,7 +101,8 @@ robot.set_physical_params(mass=HEAVY_KG)
 heavy = climb_run(robot, HEAVY_KG)
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The three spell "leave this field alone" differently, and it is the pattern for every service
 in this chapter. Rust chains `with_*` setters on a default; Python takes keyword arguments and
@@ -129,6 +136,10 @@ bad request is indistinguishable from a good one from outside.
 `set_physical_params` refuses both cases itself, as `VrError::InvalidArgument` naming the
 field, before anything reaches the wire.
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     show_refusal(
         "mass = 0.0",
@@ -144,8 +155,10 @@ field, before anything reaches the wire.
     );
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex22_physical_params.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex22_physical_params.cpp`:
 
 ```cpp
 show_refusal("mass = 0.0", [&] {
@@ -166,10 +179,10 @@ show_refusal("nothing set at all",
              [&] { robot.set_physical_params(vrsdk::physical_params()); });
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex22_physical_params.py</code>)</summary>
+`examples/python/ex22_physical_params.py`:
 
 ```python
 show_refusal("mass = 0.0", lambda: robot.set_physical_params(mass=0.0))
@@ -180,7 +193,8 @@ show_refusal(
 show_refusal("nothing set at all", lambda: robot.set_physical_params())
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The helper takes a callable in C++ and Python because the refusal arrives as a thrown
 exception, where Rust's takes the returned `Result` directly. The third case reads

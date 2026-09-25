@@ -46,6 +46,10 @@ against rather than what happens to be checked out beside it.
 The other half of the comparison rides on every state snapshot. From
 `examples/rust/src/bin/ex12_version_info.rs`:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     let robot = VirtualRobot::connect(RobotType::Multirotor, Some(SYS_ID))?;
     let first = robot.states();
@@ -67,8 +71,10 @@ The other half of the comparison rides on every state snapshot. From
     }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex12_version_info.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex12_version_info.cpp`:
 
 ```cpp
         vrsdk::VirtualRobot robot(vrsdk::RobotType::Multirotor, SYS_ID);
@@ -86,10 +92,10 @@ The other half of the comparison rides on every state snapshot. From
         }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex12_version_info.py</code>)</summary>
+`examples/python/ex12_version_info.py`:
 
 ```python
     mr = VirtualRobot(RobotType.MULTIROTOR, sys_id=SYS_ID)
@@ -107,7 +113,8 @@ The other half of the comparison rides on every state snapshot. From
         )
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 `version_info()` returns a struct in Rust and C++ (`v.schema_version`) but a dict in
 Python (`v['schema_version']`). C++ reaches the header fields through `first.raw`, and it

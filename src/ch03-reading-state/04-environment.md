@@ -70,7 +70,11 @@ fall back to the vertical component of `kin.lin_pos` with the sign that the snap
 The tour example prints the environment in two lines, and labels the `agl` line with
 the example's own claim about it.
 
-From `examples/rust/src/bin/ex10_sensors_tour.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex10_sensors_tour.rs`:
 
 ```rust
 let env = &s.env;
@@ -88,8 +92,10 @@ println!(
 );
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex10_sensors_tour.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex10_sensors_tour.cpp`:
 
 ```cpp
 std::printf("WORLD  environment\n");
@@ -102,10 +108,10 @@ std::printf(
     r.env.agl, r.env.geo_point.latitude, r.env.geo_point.longitude);
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex10_sensors_tour.py</code>)</summary>
+`examples/python/ex10_sensors_tour.py`:
 
 ```python
 env = s.env
@@ -121,7 +127,8 @@ print(
 )
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 All three carry the same warning in the same place, because all three read the same field
 from the same message: `agl` is the one entry in this block you cannot use as it stands.

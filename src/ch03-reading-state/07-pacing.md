@@ -43,12 +43,18 @@ Both signatures come from the same handle.
 
 From `crates/vrobots-sdk/src/robot.rs`:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 pub fn wait_new_state(&self, timeout: Duration) -> VrResult<()> {
 ```
 
-<details>
-<summary>The same in C++ (<code>cpp/include/vrobots_sdk.hpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`cpp/include/vrobots_sdk.hpp`:
 
 ```cpp
 void wait_new_state(double timeout_s = 0.2)
@@ -56,17 +62,18 @@ void wait_new_state(double timeout_s = 0.2)
 void rate(double hz)
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>crates/vrobots-sdk-py/python/vrsdk/_vrsdk.pyi</code>)</summary>
+`crates/vrobots-sdk-py/python/vrsdk/_vrsdk.pyi`:
 
 ```python
 def wait_new_state(self, timeout: float = 0.2) -> None: ...
 def rate(self, hz: float) -> None: ...
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Rust takes a `Duration`; C++ and Python take seconds as a plain `double`, and both default it
 to 0.2. Neither returns the sample in any of the three, so `states()` is still the read.
@@ -86,7 +93,11 @@ Propagating that error out of `main` with `?` is the single most common way to t
 paused simulator into a crashed program. Match on it instead, and let every other
 variant be fatal.
 
-From `examples/rust/src/bin/ex09_state_paced_loop.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex09_state_paced_loop.rs`:
 
 ```rust
 loop {
@@ -129,8 +140,10 @@ loop {
 }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex09_state_paced_loop.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex09_state_paced_loop.cpp`:
 
 ```cpp
 for (;;) {
@@ -167,10 +180,10 @@ for (;;) {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex09_state_paced_loop.py</code>)</summary>
+`examples/python/ex09_state_paced_loop.py`:
 
 ```python
 while True:
@@ -200,7 +213,8 @@ while True:
     print(f"seq={s.seq} dt={dt_ms:6.1f} ms pos=({x:.3f},{y:.2f},{z:.2f}){note}")
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Rust's `match` puts the two outcomes side by side; C++ and Python invert it, catching the
 timeout, re-raising everything else, and falling through to the work. The `continue` in the

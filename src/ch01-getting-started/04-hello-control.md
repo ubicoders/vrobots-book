@@ -13,7 +13,11 @@ python examples/python/ex02_hello_control.py
 The same loop as [Hello states](03-hello-states.md), with two lines added: one that
 computes a command and one that sends it.
 
-From `examples/rust/src/bin/ex02_hello_control.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex02_hello_control.rs`:
 
 ```rust
 use vrobots_sdk::{RobotType, VirtualRobot, VrError};
@@ -45,8 +49,10 @@ fn main() -> Result<(), VrError> {
 }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex02_hello_control.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex02_hello_control.cpp`:
 
 ```cpp
 constexpr std::uint32_t SYS_ID = 1;  // the multirotor in the test scene
@@ -90,10 +96,10 @@ int main() {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex02_hello_control.py</code>)</summary>
+`examples/python/ex02_hello_control.py`:
 
 ```python
 SYS_ID = 1  # the multirotor in the test scene
@@ -125,7 +131,8 @@ def main() -> None:
         mr.rate(HZ)
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Python accepts the four values loose or as one sequence; C++ takes a `std::vector<double>`
 and reads the echo through `s.pwm()`, which is the same `actuator.pwm` array the other two

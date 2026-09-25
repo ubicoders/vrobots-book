@@ -53,7 +53,11 @@ sample.
 
 The sample-paced example computes both the wall gap and the skip count on each wakeup.
 
-From `examples/rust/src/bin/ex09_state_paced_loop.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex09_state_paced_loop.rs`:
 
 ```rust
 let s = robot.states();
@@ -67,8 +71,10 @@ last_seq = s.seq;
 last_t_ns = s.t_ns;
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex09_state_paced_loop.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex09_state_paced_loop.cpp`:
 
 ```cpp
 // Exactly one new sample is waiting -- read it and do the work.
@@ -80,10 +86,10 @@ last_seq = s.seq;
 last_t_ns = s.t_ns;
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex09_state_paced_loop.py</code>)</summary>
+`examples/python/ex09_state_paced_loop.py`:
 
 ```python
 # Exactly one new sample is waiting -- read it and do the work.
@@ -93,7 +99,8 @@ skipped = max(0, s.seq - (last_seq + 1))
 last_seq, last_t_ns = s.seq, s.t_ns
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 `t_ns` is a signed 64-bit integer of nanoseconds and `seq` an unsigned 64-bit counter in all
 three, so the arithmetic is the same everywhere. Only the guard against the first iteration

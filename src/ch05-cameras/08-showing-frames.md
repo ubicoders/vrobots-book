@@ -30,6 +30,10 @@ Setup is the same `open_camera` on `front_left` as
 Nothing is mounted, so nothing has to be torn down. The loop is where the two lessons of this page live. From
 `examples/rust/src/bin/ex34_camera_view.rs`:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     // ===== loop =====
     // Frame-paced: wait_new_frame blocks until the next render, so imshow runs
@@ -69,8 +73,10 @@ Nothing is mounted, so nothing has to be torn down. The loop is where the two le
     }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex34_camera_view.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex34_camera_view.cpp`:
 
 ```cpp
         // ===== loop =====
@@ -116,10 +122,10 @@ Nothing is mounted, so nothing has to be torn down. The loop is where the two le
         }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex34_camera_view.py</code>)</summary>
+`examples/python/ex34_camera_view.py`:
 
 ```python
     # ===== loop =====
@@ -152,7 +158,8 @@ Nothing is mounted, so nothing has to be torn down. The loop is where the two le
             break
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Two differences worth naming. Rust matches on `VrError::Timeout` where C++ compares
 `e.code()` against `VRSDK_ERR_TIMEOUT` and Python compares `e.code` against

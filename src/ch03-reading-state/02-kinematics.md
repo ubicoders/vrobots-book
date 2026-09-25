@@ -89,7 +89,11 @@ considerably more direct than inferring them from the acceleration.
 The tour example prints the whole of `kin` and the wrench together, labelling each
 line with its frame.
 
-From `examples/rust/src/bin/ex10_sensors_tour.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex10_sensors_tour.rs`:
 
 ```rust
 // -- truth ----------------------------------------------------------
@@ -114,8 +118,10 @@ println!(
 );
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex10_sensors_tour.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex10_sensors_tour.cpp`:
 
 ```cpp
 // -- truth --------------------------------------------------------
@@ -131,10 +137,10 @@ v3("force", r.wrench.force, "N", "(total on the body)");
 v3("torque", r.wrench.torque, "N.m", "");
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex10_sensors_tour.py</code>)</summary>
+`examples/python/ex10_sensors_tour.py`:
 
 ```python
 # -- truth ----------------------------------------------------------
@@ -150,7 +156,8 @@ print(f"  ang_acc   {v3(k.ang_acc)} rad/s^2 (body)")
 print(f"  wrench    F={v3(s.wrench.force)} N  T={v3(s.wrench.torque)} N.m")
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Rust and Python read `quat` as a four-element sequence; C++ indexes the C array. Every field
 name, frame and unit is the same in all three, and so is the rule that `lin_pos` and `quat`

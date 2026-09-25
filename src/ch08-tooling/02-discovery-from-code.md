@@ -17,24 +17,30 @@ two questions actually occur in.
 Two listing calls and one capability question. From
 `crates/vrobots-sdk/src/discovery.rs`:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 pub fn list_topics(timeout: Duration) -> VrResult<Vec<TopicInfo>>
 pub fn list_topics_with(timeout: Duration, options: &ConnectOptions) -> VrResult<Vec<TopicInfo>>
 pub fn discovery_covers_all_transports() -> bool
 ```
 
-<details>
-<summary>The same in C++ (<code>cpp/include/vrobots_sdk.hpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`cpp/include/vrobots_sdk.hpp`:
 
 ```cpp
 inline std::vector<TopicInfo> list_topics(double timeout_s = 1.5,
                                           const vrsdk_connect_options_t* options = nullptr)
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>crates/vrobots-sdk-py/python/vrsdk/_vrsdk.pyi</code>)</summary>
+`crates/vrobots-sdk-py/python/vrsdk/_vrsdk.pyi`:
 
 ```python
 def list_topics(
@@ -42,7 +48,8 @@ def list_topics(
 ) -> list[TopicInfo]: ...
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Rust splits the plain and the options-taking call in two; C++ and Python fold both into
 one function with defaulted trailing arguments, and Python narrows the options to the
@@ -114,6 +121,10 @@ measured" rather than "zero traffic".
 From `examples/rust/src/bin/ex11_topic_discovery.rs`, the print loop is a three-way
 branch on `observed` and `live` rather than a two-way one:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     println!("\n{:<4} {:>7} {:>9}  topic", "wire", "Hz", "bytes");
     for t in &topics {
@@ -129,8 +140,10 @@ branch on `observed` and `live` rather than a two-way one:
     }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex11_topic_discovery.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex11_topic_discovery.cpp`:
 
 ```cpp
         std::printf("\n%-4s %7s %9s  topic\n", "wire", "Hz", "bytes");
@@ -146,10 +159,10 @@ branch on `observed` and `live` rather than a two-way one:
         }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex11_topic_discovery.py</code>)</summary>
+`examples/python/ex11_topic_discovery.py`:
 
 ```python
     print(f"\n{'wire':<4} {'Hz':>7} {'bytes':>9}  topic")
@@ -164,7 +177,8 @@ branch on `observed` and `live` rather than a two-way one:
         print(f"[{t.transport}] {hz:>7} {nbytes:>9}  {t.key}")
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Rust reaches the wire tag through a method, `t.transport.tag()`, because `Transport` is
 an enum; C++ and Python both hand you `t.transport` already as the string `"z"` or `"i"`.
@@ -178,6 +192,10 @@ The reason to do this in code rather than at the command line is that the result
 data. Grouping by `sys_id` is how a program answers "which robots exist, and does the
 one I want have a camera".
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     let mut by_robot: BTreeMap<Option<u32>, Vec<&str>> = BTreeMap::new();
     for t in &topics {
@@ -185,8 +203,10 @@ one I want have a camera".
     }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex11_topic_discovery.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex11_topic_discovery.cpp`:
 
 ```cpp
         std::map<std::optional<std::uint32_t>, std::vector<std::string>> by_robot;
@@ -195,10 +215,10 @@ one I want have a camera".
         }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex11_topic_discovery.py</code>)</summary>
+`examples/python/ex11_topic_discovery.py`:
 
 ```python
     by_robot: dict[int | None, list[str]] = defaultdict(list)
@@ -206,7 +226,8 @@ one I want have a camera".
         by_robot[t.sys_id].append(t.key)
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The absent id is `Option<u32>` in Rust, `std::optional<std::uint32_t>` in C++ and `None`
 in Python, and all three sort or group on it directly. Rust and C++ get the ordering for

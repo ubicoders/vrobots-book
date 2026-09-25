@@ -82,6 +82,10 @@ after every reset.
 Every command carries the same argument struct, and each id reads the one or two fields it
 cares about.
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 #[non_exhaustive]
 pub struct CmdArgs {
@@ -96,8 +100,10 @@ pub struct CmdArgs {
 }
 ```
 
-<details>
-<summary>The same in C++ (<code>crates/vrobots-sdk-capi/include/vrobots_sdk.h</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`crates/vrobots-sdk-capi/include/vrobots_sdk.h`:
 
 ```c
 typedef struct vrsdk_cmd_args_t {
@@ -116,10 +122,10 @@ typedef struct vrsdk_cmd_args_t {
 } vrsdk_cmd_args_t;
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>crates/vrobots-sdk-py/python/vrsdk/_vrsdk.pyi</code>)</summary>
+`crates/vrobots-sdk-py/python/vrsdk/_vrsdk.pyi`:
 
 ```python
 int_val: int = 0
@@ -132,7 +138,8 @@ vec3_arr: Optional[Sequence[Sequence[float]]] = None
 vec4_arr: Optional[Sequence[Sequence[float]]] = None
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The same eight fields carry the same meanings in all three. C++ uses the C struct directly, so
 every array is a pointer with an explicit `_len`, and `vec3_arr` and `vec4_arr` are flat

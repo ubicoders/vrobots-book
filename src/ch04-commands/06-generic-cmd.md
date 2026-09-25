@@ -11,12 +11,18 @@ python examples/python/ex08_generic_cmd.py
 
 ## One message, and cmd_id decides what it means
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 pub fn send_cmd(&self, cmd_id: u32, args: &CmdArgs) -> VrResult<()>
 ```
 
-<details>
-<summary>The same in C++ (<code>cpp/include/vrobots_sdk.hpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`cpp/include/vrobots_sdk.hpp`:
 
 ```cpp
 /// Publish any command by id -- the escape hatch for the whole
@@ -24,10 +30,10 @@ pub fn send_cmd(&self, cmd_id: u32, args: &CmdArgs) -> VrResult<()>
 void send_cmd(std::uint32_t cmd_id, const vrsdk_cmd_args_t* args = nullptr)
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>crates/vrobots-sdk-py/python/vrsdk/_vrsdk.pyi</code>)</summary>
+`crates/vrobots-sdk-py/python/vrsdk/_vrsdk.pyi`:
 
 ```python
 def send_cmd(
@@ -45,7 +51,8 @@ def send_cmd(
 ) -> None: ...
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Python has no `CmdArgs` type at all: the eight payload fields are keyword arguments on the
 call, and anything you omit stays off the wire. C++ passes the plain C struct by pointer,
@@ -67,6 +74,10 @@ validates its arguments, and `send_cmd` publishes whatever you build.
 `examples/rust/src/bin/ex08_generic_cmd.rs` sends two commands per iteration to the truck,
 on purpose:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     loop {
         // (1) An implemented id, built by hand. CmdArgs::ints fills int_arr,
@@ -82,8 +93,10 @@ on purpose:
         robot.send_cmd(cmd::ADD_BODY_FORCE, &gust)?;
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex08_generic_cmd.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex08_generic_cmd.cpp`:
 
 ```cpp
 // ===== loop =====
@@ -106,10 +119,10 @@ for (;;) {
     robot.send_cmd(ADD_BODY_FORCE, &force);
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex08_generic_cmd.py</code>)</summary>
+`examples/python/ex08_generic_cmd.py`:
 
 ```python
 # ===== loop =====
@@ -124,7 +137,8 @@ while True:
     car.send_cmd(cmd.ADD_BODY_FORCE, vec3=GUST_N)
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Python is the shortest because the payload is keyword arguments. C++ is the longest because
 each call needs a `vrsdk_cmd_args_default` first, and it also declares the two ids as its
@@ -145,6 +159,10 @@ returns `""` for an id that is not in the schema.
 
 ## CmdArgs
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 #[non_exhaustive]
 pub struct CmdArgs {
@@ -159,8 +177,10 @@ pub struct CmdArgs {
 }
 ```
 
-<details>
-<summary>The same in C++ (<code>crates/vrobots-sdk-capi/include/vrobots_sdk.h</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`crates/vrobots-sdk-capi/include/vrobots_sdk.h`:
 
 ```c
 typedef struct vrsdk_cmd_args_t {
@@ -179,10 +199,10 @@ typedef struct vrsdk_cmd_args_t {
 } vrsdk_cmd_args_t;
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>crates/vrobots-sdk-py/python/vrsdk/_vrsdk.pyi</code>)</summary>
+`crates/vrobots-sdk-py/python/vrsdk/_vrsdk.pyi`:
 
 ```python
 int_val: int = 0
@@ -195,7 +215,8 @@ vec3_arr: Optional[Sequence[Sequence[float]]] = None
 vec4_arr: Optional[Sequence[Sequence[float]]] = None
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The eight fields in the table below are the same eight in all three. The C struct pairs every
 array with an explicit `_len`, and it flattens `vec3_arr` and `vec4_arr` into one `double`

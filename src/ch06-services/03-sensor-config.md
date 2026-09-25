@@ -102,7 +102,11 @@ geodetic receiver's error ellipsoid is not a body quantity.
 of each reading is that sensor's noise realisation. It measures a window, configures, and
 measures again.
 
-From `examples/rust/src/bin/ex24_sensor_config.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex24_sensor_config.rs`:
 
 ```rust
     let config = SensorConfig::default()
@@ -125,8 +129,10 @@ From `examples/rust/src/bin/ex24_sensor_config.rs`:
     robot.configure_sensors(&config)?;
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex24_sensor_config.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex24_sensor_config.cpp`:
 
 ```cpp
 auto config = vrsdk::sensor_config();
@@ -172,10 +178,10 @@ for (int i = 0; i < 3; ++i) {
 robot.configure_sensors(config);
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex24_sensor_config.py</code>)</summary>
+`examples/python/ex24_sensor_config.py`:
 
 ```python
 robot.configure_sensors(
@@ -196,7 +202,8 @@ robot.configure_sensors(
 )
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Only C++ gates the blocks by hand: it builds the plain C struct from `vrsdk::sensor_config()`
 and sets a `has_*` flag beside each one, where Rust chains `with_*` setters and Python passes

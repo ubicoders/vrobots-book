@@ -13,7 +13,11 @@ python examples/python/ex05_hello_car.py
 The same loop shape as [Hello control](04-hello-control.md), a different actuator, and a
 different robot: `SYS_ID` is 0 because the truck is the other vehicle in the test scene.
 
-From `examples/rust/src/bin/ex05_hello_car.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex05_hello_car.rs`:
 
 ```rust
 use vrobots_sdk::{RobotType, VirtualRobot, VrError};
@@ -50,8 +54,10 @@ fn main() -> Result<(), VrError> {
 }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex05_hello_car.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex05_hello_car.cpp`:
 
 ```cpp
 constexpr std::uint32_t SYS_ID = 0;      // the truck in the test scene
@@ -99,10 +105,10 @@ int main() {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex05_hello_car.py</code>)</summary>
+`examples/python/ex05_hello_car.py`:
 
 ```python
 SYS_ID = 0  # the truck in the test scene
@@ -136,7 +142,8 @@ def main() -> None:
         car.rate(HZ)
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The brake is the third argument in all three, and it is optional in all three: Rust wraps it
 in `Some`, C++ in a `std::optional`, Python defaults it to `None`. Omitting it sends the

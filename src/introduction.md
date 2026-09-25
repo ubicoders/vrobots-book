@@ -35,7 +35,11 @@ difference, and every page in the book assumes it.
 
 The whole of `main` in the first example shows the shape.
 
-From `examples/rust/src/bin/ex01_hello_states.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex01_hello_states.rs`:
 
 ```rust
 fn main() -> Result<(), VrError> {
@@ -53,8 +57,10 @@ fn main() -> Result<(), VrError> {
 }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex01_hello_states.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex01_hello_states.cpp`:
 
 ```cpp
 int main() {
@@ -83,10 +89,10 @@ int main() {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex01_hello_states.py</code>)</summary>
+`examples/python/ex01_hello_states.py`:
 
 ```python
 def main() -> None:
@@ -103,7 +109,8 @@ def main() -> None:
         mr.rate(HZ)  # drift-compensated pacing, Hz
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The program prints one line per iteration at the rate `robot.rate` paces it to, until you
 stop it with Ctrl+C. [The shape of a program](ch02-concepts/04-program-shape.md) explains

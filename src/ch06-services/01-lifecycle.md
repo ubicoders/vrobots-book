@@ -40,7 +40,11 @@ because the scene already did.
 system, so the SDK sends it exactly once and never retries: a retry that lands spawns a second
 robot.
 
-From `examples/rust/src/bin/ex04_hello_service.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex04_hello_service.rs`:
 
 ```rust
     // Create a NEW robot in the sim (no sys_id -> manager create; reply carries the id).
@@ -49,8 +53,10 @@ From `examples/rust/src/bin/ex04_hello_service.rs`:
     println!("created sys_id = {sys_id}");
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex04_hello_service.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex04_hello_service.cpp`:
 
 ```cpp
 // Create a NEW robot in the sim: `create` means "no sys_id", so the
@@ -62,10 +68,10 @@ const std::uint32_t sys_id = robot.sys_id();
 std::printf("created sys_id = %u\n", sys_id);
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex04_hello_service.py</code>)</summary>
+`examples/python/ex04_hello_service.py`:
 
 ```python
 # Create a NEW robot in the sim (no sys_id -> manager create; the reply
@@ -76,7 +82,8 @@ sys_id = robot.sys_id
 print(f"created sys_id = {sys_id}")
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 C++ and Python build the handle first and call `connect()` on it, where Rust's
 `VirtualRobot::connect` does both in one call. C++ spells the create form
@@ -95,6 +102,10 @@ its state topic: vrobots/<id>/z/state
 Deletion is explicit and never implicit. Dropping a `VirtualRobot` closes the session and
 leaves the robot running, which is the point of the fourth rule: robots outlive the process.
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     // Deletion is explicit and never implicit. delete() waits for the state topic
     // to fall silent: the manager's ack is only a receipt, absence is the proof.
@@ -105,8 +116,10 @@ leaves the robot running, which is the point of the fourth rule: robots outlive 
     );
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex04_hello_service.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex04_hello_service.cpp`:
 
 ```cpp
 // Deletion is explicit and never implicit. The manager's ack is only a
@@ -117,10 +130,10 @@ std::printf("deleted sys_id = %u (removed=%s)\n", sys_id,
             robot.removed() ? "true" : "false");
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex04_hello_service.py</code>)</summary>
+`examples/python/ex04_hello_service.py`:
 
 ```python
 # Deletion is explicit and never implicit. delete() waits for the state topic
@@ -129,7 +142,8 @@ robot.delete()
 print(f"deleted sys_id = {sys_id} (is_deleted={robot.is_deleted})")
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Only the names differ. C++ spells the pair `remove()` and `removed()` because `delete` is a
 keyword, and Python's `is_deleted` is a property where Rust's is a method.
@@ -148,6 +162,10 @@ deleted sys_id = <id> (is_deleted=true)
 After that the handle is spent. Every command and every service on it fails with
 `VrError::Deleted` rather than doing nothing quietly.
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     match robot.set_mr_pwm([1500.0; 4]) {
         Ok(()) => println!("unexpected: a deleted robot accepted a command"),
@@ -155,8 +173,10 @@ After that the handle is spent. Every command and every service on it fails with
     }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex04_hello_service.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex04_hello_service.cpp`:
 
 ```cpp
 try {
@@ -167,10 +187,10 @@ try {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex04_hello_service.py</code>)</summary>
+`examples/python/ex04_hello_service.py`:
 
 ```python
 try:
@@ -180,7 +200,8 @@ except vrsdk.VrError as e:
     print(f"the handle is spent, as expected: [{e.code} {e.kind}] {e.detail}")
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Rust returns the refusal as a `Result` you match on, while C++ throws `vrsdk::Error` and
 Python raises `vrsdk.VrError`, so both need the call inside a `try`. Python also accepts the
@@ -196,7 +217,11 @@ the handle is spent, as expected: [<code>] <message>
 and angular velocity, rests the actuators and re-latches the robot's initial command. It is
 what the simulator's own Reset button does.
 
-From `examples/rust/src/bin/ex21_reset.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex21_reset.rs`:
 
 ```rust
     let before = robot.states();
@@ -208,8 +233,10 @@ From `examples/rust/src/bin/ex21_reset.rs`:
     );
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex21_reset.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex21_reset.cpp`:
 
 ```cpp
 const vrsdk::State before = robot.states();
@@ -220,10 +247,10 @@ std::printf(
     "and the state stream is the proof.\n");
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex21_reset.py</code>)</summary>
+`examples/python/ex21_reset.py`:
 
 ```python
 before = robot.states
@@ -235,7 +262,8 @@ print(
 )
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 `reset()` takes no arguments and returns nothing in any of the three, so the only difference
 is the snapshot beside it: `robot.states` is a property in Python where Rust and C++ call
@@ -270,6 +298,10 @@ position as home reported the reset as having moved the robot away from where it
 
 Nothing reads the home pose out, so the only honest way to learn it is to go there.
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 fn learn_home(robot: &VirtualRobot, created: bool) -> Result<Arc<State>, VrError> {
     if created {
@@ -285,8 +317,10 @@ fn learn_home(robot: &VirtualRobot, created: bool) -> Result<Arc<State>, VrError
 }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex21_reset.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex21_reset.cpp`:
 
 ```cpp
 vrsdk::State learn_home(vrsdk::VirtualRobot& robot, bool created) {
@@ -302,10 +336,10 @@ vrsdk::State learn_home(vrsdk::VirtualRobot& robot, bool created) {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex21_reset.py</code>)</summary>
+`examples/python/ex21_reset.py`:
 
 ```python
 def learn_home(robot: VirtualRobot, created: bool):
@@ -319,7 +353,8 @@ def learn_home(robot: VirtualRobot, created: bool):
     return robot.states
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The snapshot each one hands back differs in ownership, not in content: Rust returns an
 `Arc<State>`, C++ returns a `vrsdk::State` by value, and Python returns whatever the property

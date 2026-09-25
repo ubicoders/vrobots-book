@@ -32,6 +32,10 @@ owns every letter of `m*x'' + c*x' + k*x = F`: `m` through `set_physical_params`
 
 From `examples/rust/src/bin/ex28_hello_msd.rs`, the start of one step-response run:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     println!("-- {label} --");
     if retune {
@@ -43,8 +47,10 @@ From `examples/rust/src/bin/ex28_hello_msd.rs`, the start of one step-response r
     robot.reset()?;
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex28_hello_msd.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex28_hello_msd.cpp`:
 
 ```cpp
 std::printf("-- %s --\n", label);
@@ -62,10 +68,10 @@ robot.set_msd_force(0.0);
 robot.reset();
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex28_hello_msd.py</code>)</summary>
+`examples/python/ex28_hello_msd.py`:
 
 ```python
 print(f"-- {label} --")
@@ -77,7 +83,8 @@ robot.set_msd_force(0.0)
 robot.reset()
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The three spell the optional configuration fields differently, and the difference is worth
 noticing because it is the pattern for every service in
@@ -129,14 +136,20 @@ underactuated means: the pole is unactuated by design, and there is no command a
 the SDK that touches it. From `examples/rust/src/bin/ex29_hello_cartpole.rs`, the whole
 control output is three lines:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
         let force = (-K_THETA * theta - K_THETA_DOT * theta_dot + K_X * x + K_V * v)
             .clamp(-MAX_FORCE_N, MAX_FORCE_N);
         robot.set_cartpole_force(force)?;
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex29_hello_cartpole.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex29_hello_cartpole.cpp`:
 
 ```cpp
 const double raw = -K_THETA * theta - K_THETA_DOT * theta_dot + K_X * x + K_V * v;
@@ -144,10 +157,10 @@ const double force = std::fmin(std::fmax(raw, -MAX_FORCE_N), MAX_FORCE_N);
 robot.set_cartpole_force(force);
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex29_hello_cartpole.py</code>)</summary>
+`examples/python/ex29_hello_cartpole.py`:
 
 ```python
 force = min(
@@ -157,7 +170,8 @@ force = min(
 robot.set_cartpole_force(force)
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Only the clamp differs, because only Rust has `f64::clamp` on the primitive. The control law
 and the newtons on the wire are identical.
@@ -188,12 +202,18 @@ stays applied, and the pole is on the floor within about a second. Two habits fo
 a late state sample as a reason to hold the last force rather than to send something new,
 and release the latch explicitly on the way out:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     robot.set_cartpole_force(0.0)?;
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex29_hello_cartpole.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex29_hello_cartpole.cpp`:
 
 ```cpp
 // ===== hand it back =====
@@ -201,10 +221,10 @@ and release the latch explicitly on the way out:
 robot.set_cartpole_force(0.0);
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex29_hello_cartpole.py</code>)</summary>
+`examples/python/ex29_hello_cartpole.py`:
 
 ```python
 # ===== hand it back =====
@@ -212,7 +232,8 @@ robot.set_cartpole_force(0.0);
 robot.set_cartpole_force(0.0)
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 A Ctrl-C skips that line and leaves the cart pushing.
 

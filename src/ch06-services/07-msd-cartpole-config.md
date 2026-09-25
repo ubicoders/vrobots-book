@@ -34,6 +34,10 @@ answer you can predict before you run it.
 
 From `examples/rust/src/bin/ex28_hello_msd.rs`, retuning the plant between runs:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     if retune {
         robot.configure_msd(&MsdConfig::default().with_spring_k(k).with_damping_c(c))?;
@@ -44,8 +48,10 @@ From `examples/rust/src/bin/ex28_hello_msd.rs`, retuning the plant between runs:
     robot.reset()?;
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex28_hello_msd.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex28_hello_msd.cpp`:
 
 ```cpp
 if (retune) {
@@ -62,10 +68,10 @@ robot.set_msd_force(0.0);
 robot.reset();
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex28_hello_msd.py</code>)</summary>
+`examples/python/ex28_hello_msd.py`:
 
 ```python
 if retune:
@@ -76,7 +82,8 @@ robot.set_msd_force(0.0)
 robot.reset()
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Two optional fields, three spellings: Rust chains `with_spring_k` and `with_damping_c` onto a
 default, Python names them as keyword arguments, and C++ writes each value beside its own `has_*`
@@ -103,6 +110,10 @@ value beside the predicted one for three plants:
 
 The last thing `ex28` does is ask for a spring that pulls the wrong way, and read the refusal:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     match robot.configure_msd(&MsdConfig::default().with_spring_k(-5.0)) {
         Ok(()) => println!("\nUNEXPECTED: a negative spring constant was accepted"),
@@ -110,8 +121,10 @@ The last thing `ex28` does is ask for a spring that pulls the wrong way, and rea
     }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex28_hello_msd.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex28_hello_msd.cpp`:
 
 ```cpp
 try {
@@ -125,10 +138,10 @@ try {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex28_hello_msd.py</code>)</summary>
+`examples/python/ex28_hello_msd.py`:
 
 ```python
 try:
@@ -138,7 +151,8 @@ except vrsdk.VrError as e:
     print(f"\nspring_k = -5.0 -> [{e.code} {e.kind}] {e.detail}")
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The refusal is client-side on all three, so nothing reaches the wire. Rust returns it as a `Result`
 you match on, while C++ throws `vrsdk::Error` and Python raises `vrsdk.VrError`, which is why the
@@ -168,7 +182,11 @@ Out-of-range values are not refused by the simulator, they are silently replaced
 defaults above and acked `ok`. `configure_cartpole` therefore refuses non-positive masses,
 lengths and forces itself.
 
-From `examples/rust/src/bin/ex29_hello_cartpole.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex29_hello_cartpole.rs`:
 
 ```rust
     robot.configure_cartpole(
@@ -184,8 +202,10 @@ From `examples/rust/src/bin/ex29_hello_cartpole.rs`:
     )?;
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex29_hello_cartpole.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex29_hello_cartpole.cpp`:
 
 ```cpp
 {
@@ -210,10 +230,10 @@ From `examples/rust/src/bin/ex29_hello_cartpole.rs`:
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex29_hello_cartpole.py</code>)</summary>
+`examples/python/ex29_hello_cartpole.py`:
 
 ```python
 robot.configure_cartpole(
@@ -228,7 +248,8 @@ robot.configure_cartpole(
 )
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Eight fields is where the C++ shape costs the most: sixteen assignments against eight setters or
 eight keyword arguments. A missed `has_*` flag among them leaves that one field at the plant's
@@ -275,14 +296,20 @@ metres away, past a dead stop it cannot cross.
 Capture the origin yourself, the same way `ex21` learns a multirotor's home: reset, settle,
 read.
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     robot.reset()?;
     settle(&robot);
     let rail_centre = robot.states().kin.lin_pos[0];
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex29_hello_cartpole.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex29_hello_cartpole.cpp`:
 
 ```cpp
 robot.reset();
@@ -290,10 +317,10 @@ settle(robot);
 const double rail_centre = robot.states().kin().lin_pos[0];
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex29_hello_cartpole.py</code>)</summary>
+`examples/python/ex29_hello_cartpole.py`:
 
 ```python
 robot.reset()
@@ -301,7 +328,8 @@ settle(robot)
 rail_centre = robot.states.kin.lin_pos[0]
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Only the path to the field differs. C++ reaches the kinematics block through the `kin()` accessor
 over the raw C state, and Python exposes `states` as a property rather than a call.

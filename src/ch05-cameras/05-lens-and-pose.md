@@ -49,6 +49,10 @@ the 600 px default at about 61.9 degrees on a 720p frame and 400 px at about 84.
 
 From `examples/rust/src/bin/ex17_camera_pose.rs`, the whole configuration:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 let options = CameraOptions::default()
     .with_mount_position(MOUNT_POSITION)
@@ -61,8 +65,10 @@ let cam = robot.mount_camera_with(CAMERA, RESOLUTION, FORMAT, &options)?;
 println!("camera stream: {}", cam.service_name());
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex17_camera_pose.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex17_camera_pose.cpp`:
 
 ```cpp
 // Start from the documented defaults, then override.
@@ -81,10 +87,10 @@ vrsdk::CameraStream cam = robot.mount_camera(CAMERA, RESOLUTION, FORMAT, &option
 std::printf("camera stream: %s\n", cam.service_name().c_str());
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex17_camera_pose.py</code>)</summary>
+`examples/python/ex17_camera_pose.py`:
 
 ```python
 cam = mr.mount_camera(
@@ -101,7 +107,8 @@ cam = mr.mount_camera(
 print(f"camera stream: {cam.service_name}")
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Only Rust needs a second entry point. C++ takes an optional fourth argument on
 `mount_camera`, defaulting to a null pointer, and Python takes the same settings as
@@ -148,6 +155,10 @@ there is no distortion.
 Degrees on the way in, radians on the way out, so the read-back needs converting before it
 is comparable to what you asked for:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 // Degrees on the way in, radians on the way out: the wire is SI.
 let euler_deg = [
@@ -157,8 +168,10 @@ let euler_deg = [
 ];
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex17_camera_pose.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex17_camera_pose.cpp`:
 
 ```cpp
 const vrsdk_mount_pose_t& m = frame->info.mount;
@@ -169,10 +182,10 @@ const double euler_deg[3] = {m.euler_rad[0] * RAD2DEG, m.euler_rad[1] * RAD2DEG,
                              m.euler_rad[2] * RAD2DEG};
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex17_camera_pose.py</code>)</summary>
+`examples/python/ex17_camera_pose.py`:
 
 ```python
 m, i = frame.mount, frame.intrinsics
@@ -181,7 +194,8 @@ m, i = frame.mount, frame.intrinsics
 euler_deg = tuple(round(math.degrees(a), 1) for a in m.euler_rad)
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The asymmetry is the wire's, not the binding's: `mount_euler_deg` goes out in degrees and
 `mount.euler_rad` comes back in radians, in all three. Every surface converts at the same

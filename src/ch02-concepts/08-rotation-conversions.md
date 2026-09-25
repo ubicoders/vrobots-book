@@ -91,6 +91,10 @@ and a scene registering a convention at runtime is the same problem further out.
 ex36 reads the definition with `frame_def()` and turns it into a basis. From
 `examples/rust/src/bin/ex36_rotations.rs`:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     let basis = AxisBasis::from_frame_def(&def).ok_or_else(|| {
         VrError::InvalidArgument(format!(
@@ -101,8 +105,10 @@ ex36 reads the definition with `frame_def()` and turns it into a basis. From
     })?;
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex36_rotations.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex36_rotations.cpp`:
 
 ```cpp
 // Throws when the definition names no order and its axis convention has
@@ -110,10 +116,10 @@ ex36 reads the definition with `frame_def()` and turns it into a basis. From
 const vrsdk::rotations::AxisBasis basis = vrsdk::rotations::AxisBasis::from_frame_def(def);
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex36_rotations.py</code>)</summary>
+`examples/python/ex36_rotations.py`:
 
 ```python
     basis = rotations.AxisBasis.from_frame_def(fdef)
@@ -124,7 +130,8 @@ const vrsdk::rotations::AxisBasis basis = vrsdk::rotations::AxisBasis::from_fram
         )
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Rust returns `Option`, Python `None` and C++ throws, all saying the same thing: a basis
 with a guessed order extracts angles that look plausible and mean nothing. For the truck's
@@ -156,6 +163,10 @@ Between two frames of the same handedness `det(M) = +1` and the first two rules 
 which is why picking the wrong one survives testing until somebody crosses a flip. ex36
 converts the live gyro both ways. From `examples/rust/src/bin/ex36_rotations.rs`:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     // axial: the gyro, and the mistake beside it
     let gyro = state.sensors.gyroscope.angular_velocity;
@@ -163,8 +174,10 @@ converts the live gyro both ways. From `examples/rust/src/bin/ex36_rotations.rs`
     let gyro_wrong = t.apply_vec3(gyro);
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex36_rotations.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex36_rotations.cpp`:
 
 ```cpp
 // axial: the gyro, and the mistake beside it
@@ -173,10 +186,10 @@ const vrsdk::Vec3 gyro_frd = t.apply_axial_vec3(gyro);
 const vrsdk::Vec3 gyro_wrong = t.apply_vec3(gyro);
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex36_rotations.py</code>)</summary>
+`examples/python/ex36_rotations.py`:
 
 ```python
     # axial: the gyro, and the mistake beside it
@@ -185,7 +198,8 @@ const vrsdk::Vec3 gyro_wrong = t.apply_vec3(gyro);
     gyro_wrong = t.apply_vec3(gyro)
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The truck reports in `"fru"` and the target is `"frd"`, so `M` is `diag(1, 1, -1)` and
 `det(M) = -1`: every component of the axial answer is the negation of the polar one, and a

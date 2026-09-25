@@ -56,7 +56,11 @@ measures the same noise realisation several times over. Compare timestamps first
 `estimate` has the same `Kinematics` shape as the truth block, plus its own clock, its
 own frame, and a validity flag.
 
-From `examples/rust/src/bin/ex10_sensors_tour.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex10_sensors_tour.rs`:
 
 ```rust
 // -- believed -------------------------------------------------------
@@ -72,8 +76,10 @@ println!(
 );
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex10_sensors_tour.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex10_sensors_tour.cpp`:
 
 ```cpp
 // -- believed -----------------------------------------------------
@@ -88,10 +94,10 @@ v3("lin_pos", r.estimate.kin.lin_pos, "m", "(estimate.kin - kin IS the error)");
 v3("lin_vel", r.estimate.kin.lin_vel, "m/s", "");
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex10_sensors_tour.py</code>)</summary>
+`examples/python/ex10_sensors_tour.py`:
 
 ```python
 # -- believed -------------------------------------------------------
@@ -104,7 +110,8 @@ print(f"  lin_pos   {v3(e.kin.lin_pos)} m       (estimate.kin - kin IS the error
 print(f"  lin_vel   {v3(e.kin.lin_vel)} m/s")
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 C++ reaches the block through `s.raw`, the copied C struct, where the other two have named
 fields on the snapshot: `r.estimate.kin.lin_pos` against `s.estimate.kin.lin_pos`. The

@@ -13,14 +13,20 @@ That read is the narrowest API in the SDK.
 
 From `crates/vrobots-sdk/src/robot.rs`:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 pub fn states(&self) -> Arc<State> {
     self.channel.snapshot.load_full()
 }
 ```
 
-<details>
-<summary>The same in C++ (<code>cpp/include/vrobots_sdk.hpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`cpp/include/vrobots_sdk.hpp`:
 
 ```cpp
 [[nodiscard]] State states() const {
@@ -30,10 +36,10 @@ pub fn states(&self) -> Arc<State> {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>crates/vrobots-sdk-py/python/vrsdk/_vrsdk.pyi</code>)</summary>
+`crates/vrobots-sdk-py/python/vrsdk/_vrsdk.pyi`:
 
 ```python
 class VirtualRobot:
@@ -41,7 +47,8 @@ class VirtualRobot:
     def states(self) -> State: ...
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The three differ only in how the copy is made and named. Rust hands back a reference-counted
 clone, so reading is a pointer bump. C++ copies the C struct into a value you can store and
@@ -95,7 +102,11 @@ them, because it is the command going out and the realised motion coming back.
 
 The smallest useful program takes two fields out of the snapshot and paces itself.
 
-From `examples/rust/src/bin/ex01_hello_states.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex01_hello_states.rs`:
 
 ```rust
 loop {
@@ -106,8 +117,10 @@ loop {
 }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex01_hello_states.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex01_hello_states.cpp`:
 
 ```cpp
 for (;;) {
@@ -118,10 +131,10 @@ for (;;) {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex01_hello_states.py</code>)</summary>
+`examples/python/ex01_hello_states.py`:
 
 ```python
 while True:
@@ -131,7 +144,8 @@ while True:
     mr.rate(HZ)  # drift-compensated pacing, Hz
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Rust and Python destructure the position into three names; C++ takes a pointer to the
 three-element array, because `lin_pos` is a plain C `double[3]` there.

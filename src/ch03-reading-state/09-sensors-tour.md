@@ -25,7 +25,11 @@ this chapter becomes concrete.
 Each iteration opens with the snapshot's identity: name, id, sequence number, elapsed
 time, schema version, and the frame every vector below it is expressed in.
 
-From `examples/rust/src/bin/ex10_sensors_tour.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex10_sensors_tour.rs`:
 
 ```rust
 println!(
@@ -40,8 +44,10 @@ println!(
 );
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex10_sensors_tour.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex10_sensors_tour.cpp`:
 
 ```cpp
 const vrsdk::State s = robot.states();
@@ -52,10 +58,10 @@ std::printf("\n=== %s sys_id=%u seq=%llu t=%.3fs schema=%u frame=\"%s\" ===\n",
             s.elapsed, r.schema_version, s.coord_frame_id.c_str());
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex10_sensors_tour.py</code>)</summary>
+`examples/python/ex10_sensors_tour.py`:
 
 ```python
 s = mr.states
@@ -67,7 +73,8 @@ print(
 )
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The C++ header line omits the convention name, because the C surface exposes
 `axis_convention` as a bare `int32_t` with no name lookup beside it. Rust spells the lookup
@@ -80,6 +87,10 @@ built-in conventions.
 
 Two small helpers do all the formatting, and the second one is the interesting one.
 Also from `examples/rust/src/bin/ex10_sensors_tour.rs`:
+
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
 
 ```rust
 /// A 3-vector, aligned so a column of them reads as a column.
@@ -96,8 +107,10 @@ fn stamp(valid: bool, timestamp: f64) -> String {
 }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex10_sensors_tour.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex10_sensors_tour.cpp`:
 
 ```cpp
 /// A 3-vector, aligned so a column of them reads as a column.
@@ -111,10 +124,10 @@ static void stamp(bool valid, double timestamp) {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex10_sensors_tour.py</code>)</summary>
+`examples/python/ex10_sensors_tour.py`:
 
 ```python
 def v3(v: Sequence[float]) -> str:
@@ -127,7 +140,8 @@ def stamp(valid: bool, timestamp: float) -> str:
     return f"[{'valid' if valid else 'INVALID'} t={timestamp:.3f}]"
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The C++ helpers print rather than return, because building strings with `printf` formatting
 would mean a scratch buffer per call. That is why the C++ output puts the label and unit

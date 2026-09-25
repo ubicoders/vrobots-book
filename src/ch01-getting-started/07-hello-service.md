@@ -13,7 +13,11 @@ python examples/python/ex04_hello_service.py
 Lifecycle and configuration are one-shot request and response, so this is the first example
 with no loop in it.
 
-From `examples/rust/src/bin/ex04_hello_service.rs`:
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
+`examples/rust/src/bin/ex04_hello_service.rs`:
 
 ```rust
 use vrobots_sdk::{RobotType, VirtualRobot, VrError};
@@ -54,8 +58,10 @@ fn main() -> Result<(), VrError> {
 }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex04_hello_service.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex04_hello_service.cpp`:
 
 ```cpp
 int main() {
@@ -103,10 +109,10 @@ int main() {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex04_hello_service.py</code>)</summary>
+`examples/python/ex04_hello_service.py`:
 
 ```python
 ROBOT_TYPE = RobotType.MULTIROTOR  # or RobotType.TRUCK / RobotType.from_key("truck")
@@ -141,7 +147,8 @@ def main() -> None:
         print(f"the handle is spent, as expected: [{e.code} {e.kind}] {e.detail}")
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Three differences worth naming. C++ spells creation `VirtualRobot::create` rather than a
 one-argument constructor, because a literal `0` would be ambiguous between "attach to sys_id

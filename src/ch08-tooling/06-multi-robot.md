@@ -18,6 +18,10 @@ Each `connect` opens its own zenoh session, its own subscriber thread and its ow
 snapshot, and each blocks until its own robot's first sample arrives. From
 `examples/rust/src/bin/ex18_multi_robot.rs`:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     let truck = VirtualRobot::connect(RobotType::Truck, Some(TRUCK_ID))?;
     let drone = VirtualRobot::connect(RobotType::Multirotor, Some(DRONE_ID))?;
@@ -30,8 +34,10 @@ snapshot, and each blocks until its own robot's first sample arrives. From
     );
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex18_multi_robot.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex18_multi_robot.cpp`:
 
 ```cpp
         // Two connects, two sessions. Each blocks until *its* robot's first
@@ -43,10 +49,10 @@ snapshot, and each blocks until its own robot's first sample arrives. From
         std::printf("truck sys_id=%u, drone sys_id=%u\n", truck.sys_id(), drone.sys_id());
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex18_multi_robot.py</code>)</summary>
+`examples/python/ex18_multi_robot.py`:
 
 ```python
     truck = VirtualRobot(RobotType.TRUCK, sys_id=TRUCK_ID)
@@ -59,7 +65,8 @@ snapshot, and each blocks until its own robot's first sample arrives. From
     )
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Rust's `connect` constructs and connects in one call; C++ and Python construct the handle
 first and then call `connect()` on it, which is two statements per robot. `sys_id` and the
@@ -90,6 +97,10 @@ which is a different program.
 The loop drives the truck and reads the multirotor. Nothing pairs the two snapshots:
 each is whatever its own subscriber last received.
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
         // One robot commanded ...
         truck.set_car(STEER_US, THROTTLE_US, Some(1100.0))?;
@@ -100,8 +111,10 @@ each is whatever its own subscriber last received.
         let d = drone.states();
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex18_multi_robot.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex18_multi_robot.cpp`:
 
 ```cpp
             // One robot commanded ...
@@ -113,10 +126,10 @@ each is whatever its own subscriber last received.
             const vrsdk::State d = drone.states();
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex18_multi_robot.py</code>)</summary>
+`examples/python/ex18_multi_robot.py`:
 
 ```python
         # One robot commanded ...
@@ -128,7 +141,8 @@ each is whatever its own subscriber last received.
         d = drone.states
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The brake argument is optional in Rust, so it is `Some(1100.0)`; C++ and Python take the
 plain number. `states()` is a method in Rust and C++ and a property in Python, and in all
@@ -136,30 +150,37 @@ three it is a non-blocking read of whatever that robot's subscriber last receive
 
 Pacing happens once, at the bottom, on one handle:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
         // Paced once, on one handle.
         truck.rate(HZ);
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex18_multi_robot.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex18_multi_robot.cpp`:
 
 ```cpp
             // Paced once, on one handle.
             truck.rate(HZ);
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex18_multi_robot.py</code>)</summary>
+`examples/python/ex18_multi_robot.py`:
 
 ```python
         # Paced once, on one handle.
         truck.rate(HZ)
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 `rate` is identical across the three, and so is the rule: it sleeps the calling thread, so
 calling it on both handles halves the loop rate.
@@ -173,6 +194,10 @@ Measured live in the test scene, the truck publishes `fru` and the multirotor
 publishes `frd`. Same third component, opposite sign: up for one, down for the other.
 A program that mixes the two positions without converting has a sign error nothing
 will report.
+
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
 
 ```rust
         // Each snapshot names its own frame, and here they differ: the truck is
@@ -190,8 +215,10 @@ will report.
         );
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex18_multi_robot.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex18_multi_robot.cpp`:
 
 ```cpp
             // Each snapshot names its own frame, and here they differ: the
@@ -205,10 +232,10 @@ will report.
                 -dp[2]);  // "frd": altitude is minus the down component
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex18_multi_robot.py</code>)</summary>
+`examples/python/ex18_multi_robot.py`:
 
 ```python
         # Each snapshot names its own frame, and here they differ: the truck is
@@ -222,7 +249,8 @@ will report.
         )
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The frame tag is a plain string in all three, read off the snapshot rather than assumed.
 C++ reaches the position through `t.kin().lin_pos`, a fixed-size array it indexes, where
@@ -240,6 +268,10 @@ The example computes the separation anyway and labels it `WRONG`, because the po
 of the page is that the arithmetic runs happily and produces a number. The check that
 catches it is one comparison:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
             if t.coord_frame_id == d.coord_frame_id {
                 ""
@@ -248,23 +280,26 @@ catches it is one comparison:
             },
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex18_multi_robot.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex18_multi_robot.cpp`:
 
 ```cpp
                 t.coord_frame_id == d.coord_frame_id ? "" : " (WRONG: mixed frames, convert first)",
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex18_multi_robot.py</code>)</summary>
+`examples/python/ex18_multi_robot.py`:
 
 ```python
         warn = "" if t.coord_frame_id == d.coord_frame_id else " (WRONG: mixed frames, convert first)"
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 One string comparison in every surface. The check costs nothing and is the only thing
 standing between you and a sign error that no error path reports.

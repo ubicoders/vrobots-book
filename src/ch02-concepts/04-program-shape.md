@@ -41,6 +41,10 @@ This is the whole shape, and every example in the book is a variation on it. Fro
 `book/.research/00-shared.md`, which quotes the crate's own documentation in
 `crates/vrobots-sdk/src/lib.rs`:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 use vrobots_sdk::{RobotType, VirtualRobot, VrError};
 
@@ -60,8 +64,10 @@ fn main() -> Result<(), VrError> {
 }
 ```
 
-<details>
-<summary>The same in C++ (the header comment on <code>cpp/include/vrobots_sdk.hpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+The header comment on `cpp/include/vrobots_sdk.hpp`:
 
 ```cpp
 #include <vrobots_sdk.hpp>
@@ -78,10 +84,10 @@ int main() {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (the module docstring on <code>crates/vrobots-sdk-py/python/vrsdk/__init__.py</code>)</summary>
+The module docstring on `crates/vrobots-sdk-py/python/vrsdk/__init__.py`:
 
 ```python
 from vrsdk import VirtualRobot, RobotType
@@ -103,7 +109,8 @@ if __name__ == "__main__":
     main()
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Each surface documents this same shape as its own opening example, which is the clearest
 evidence that the shape is the API rather than a Rust convention. The one structural

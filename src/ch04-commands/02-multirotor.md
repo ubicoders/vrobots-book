@@ -14,6 +14,10 @@ python examples/python/ex02_hello_control.py
 `examples/rust/src/bin/ex02_hello_control.rs` is the loop shape from chapter 2 with one
 command in it:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 use vrobots_sdk::{RobotType, VirtualRobot, VrError};
 
@@ -44,8 +48,10 @@ fn main() -> Result<(), VrError> {
 }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex02_hello_control.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex02_hello_control.cpp`:
 
 ```cpp
 constexpr std::uint32_t SYS_ID = 1;  // the multirotor in the test scene
@@ -89,10 +95,10 @@ int main() {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex02_hello_control.py</code>)</summary>
+`examples/python/ex02_hello_control.py`:
 
 ```python
 SYS_ID = 1  # the multirotor in the test scene
@@ -124,7 +130,8 @@ def main() -> None:
         mr.rate(HZ)
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 One line per iteration. The four numbers at the end are `actuator.pwm`, which is your last
 command echoed back, so they are the proof the command landed:
@@ -154,23 +161,26 @@ equal the airframe's rotor count, which is fixed at spawn.
 The bindings need only one method each, because neither language has Rust's split between a
 fixed-size array and a slice.
 
-<details>
-<summary>The same in C++ (<code>cpp/include/vrobots_sdk.hpp</code>)</summary>
+{{#tabs global="lang" }}
+{{#tab name="C++" }}
+
+`cpp/include/vrobots_sdk.hpp`:
 
 ```cpp
 void set_mr_pwm(const std::vector<double>& pwm)
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>crates/vrobots-sdk-py/python/vrsdk/_vrsdk.pyi</code>)</summary>
+`crates/vrobots-sdk-py/python/vrsdk/_vrsdk.pyi`:
 
 ```python
 def set_mr_pwm(self, *pwm: Union[float, Sequence[float]]) -> None: ...
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 C++ takes a `std::vector<double>` of any length, so `{1501, 1501, 1501, 1501}` covers the
 quadrotor and a two-element vector covers a `HalfDrone`. Python accepts either form:

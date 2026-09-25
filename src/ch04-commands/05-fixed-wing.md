@@ -97,6 +97,10 @@ A simulator too old for the per-panel path publishes six entries rather than sev
 channel count is the version check. `examples/rust/src/bin/ex32_fw_rate_controller.rs`
 refuses to run against one:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     let channels = robot.states().actuator.measured.len();
     if channels != PANELS + 1 {
@@ -108,8 +112,10 @@ refuses to run against one:
     }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex32_fw_rate_controller.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex32_fw_rate_controller.cpp`:
 
 ```cpp
 const std::uint32_t channels = robot.states().actuator().measured_count;
@@ -123,10 +129,10 @@ if (channels != PANELS + 1) {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex32_fw_rate_controller.py</code>)</summary>
+`examples/python/ex32_fw_rate_controller.py`:
 
 ```python
 channels = len(robot.states.actuator.measured)
@@ -138,7 +144,8 @@ if channels != PANELS + 1:
     )
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 The count comes off a length in Rust and Python and off `measured_count` in C++, which is
 the same number: the C struct carries a fixed-size array plus its used length.
@@ -154,14 +161,20 @@ either. A client that wants a particular thrust must send it after **every** mod
 That is why the order in `examples/rust/src/bin/ex31_globalhawk_direct.rs` is mode first,
 thrust second:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     robot.set_fw_ctrl_mode(cmd::FW_DIRECT_SURFACE)?;
     robot.set_fw_thrust(CRUISE_N)?;
     println!("\nmode -> DIRECT_SURFACE, thrust -> {CRUISE_N} N\n");
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex31_globalhawk_direct.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex31_globalhawk_direct.cpp`:
 
 ```cpp
 // -- so the thrust command has to come AFTER the mode, every time.
@@ -170,10 +183,10 @@ robot.set_fw_thrust(CRUISE_N);
 std::printf("\nmode -> DIRECT_SURFACE, thrust -> %.0f N\n\n", CRUISE_N);
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex31_globalhawk_direct.py</code>)</summary>
+`examples/python/ex31_globalhawk_direct.py`:
 
 ```python
 # so the thrust command has to come AFTER the mode, every time.
@@ -182,7 +195,8 @@ robot.set_fw_thrust(CRUISE_N)
 print(f"\nmode -> DIRECT_SURFACE, thrust -> {CRUISE_N} N\n")
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Only the spelling of the mode differs. C++ has a real `enum class`, `vrsdk::FwCtrlMode`, so
 the argument is `FwCtrlMode::DirectSurface`; Rust and Python pass the integer constant from
@@ -225,6 +239,10 @@ exactly how a real flight computer gets fooled.
 From `examples/rust/src/bin/ex33_fw_est_source.rs`, selecting the observer with nothing
 publishing an estimate:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
     robot.set_fw_est_source(cmd::FW_EST_OBSERVER)?;
     println!(
@@ -234,8 +252,10 @@ publishing an estimate:
     );
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex33_fw_est_source.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex33_fw_est_source.cpp`:
 
 ```cpp
 // ===== phase 2: observer, with nobody publishing an estimate =====
@@ -246,10 +266,10 @@ std::printf(
     "saying exactly that.\n");
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex33_fw_est_source.py</code>)</summary>
+`examples/python/ex33_fw_est_source.py`:
 
 ```python
 # ===== phase 2: observer, with nobody publishing an estimate =====
@@ -261,7 +281,8 @@ print(
 )
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Again C++ has the typed `vrsdk::FwEstSource` where the other two pass `cmd::FW_EST_OBSERVER`
 and `cmd.FW_EST_OBSERVER`.

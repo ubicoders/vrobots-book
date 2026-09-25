@@ -64,6 +64,10 @@ do not, so the conversion happens at the call site that needs it: OpenCV users w
 `row(n)` is the shortest way to sanity-check orientation and channel order at once. From
 `examples/rust/src/bin/ex03_hello_image.rs`:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 /// Mean `blue - red` across one row: strongly positive for sky, negative for
 /// most ground. `0.0` for mono8, which has no channels to compare.
@@ -87,8 +91,10 @@ fn blueness(frame: &Frame, row: u32) -> f64 {
 }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex03_hello_image.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex03_hello_image.cpp`:
 
 ```cpp
 /// Mean `blue - red` across one row: strongly positive for sky, negative for
@@ -109,10 +115,10 @@ static double blueness(const vrsdk::Frame& frame, std::uint32_t row) {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex03_hello_image.py</code>)</summary>
+`examples/python/ex03_hello_image.py`:
 
 ```python
 def sky_ness(img: np.ndarray, row: int) -> float:
@@ -129,7 +135,8 @@ def sky_ness(img: np.ndarray, row: int) -> float:
     return float(np.mean(line[:, 2] - line[:, 0]))
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Rust and C++ walk the raw bytes: `frame.row(y)` hands back one row and `bytes_per_pixel`
 gives the stride within it. Python does not walk bytes at all, because `cam.image` is a

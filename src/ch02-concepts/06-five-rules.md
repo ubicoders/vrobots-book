@@ -31,6 +31,10 @@ echo in the state stream. `actuator.pwm` is your last command echoed back, so a
 command that never arrived shows as an echo that never changes. From
 `examples/rust/src/bin/ex02_hello_control.rs`:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 let s = robot.states();
 let [x, y, z] = s.kin.lin_pos;
@@ -40,8 +44,10 @@ println!(
 );
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex02_hello_control.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex02_hello_control.cpp`:
 
 ```cpp
 // The echo: what the robot actually latched, from the state stream.
@@ -53,10 +59,10 @@ for (std::size_t i = 0; i < echo.size(); ++i) {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex02_hello_control.py</code>)</summary>
+`examples/python/ex02_hello_control.py`:
 
 ```python
 s = mr.states
@@ -67,7 +73,8 @@ print(
 )
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Running that prints one line per iteration in which `echo` holds the pulse widths the
 robot is currently applying. A wrong `sys_id`, a command the robot does not
@@ -136,6 +143,10 @@ sample newer than the current one and returns `VrError::Timeout` when none comes
 **A timeout is a status, not a failure**: the session is fine and the next call may
 well succeed. From `examples/rust/src/bin/ex09_state_paced_loop.rs`:
 
+
+{{#tabs global="lang" }}
+{{#tab name="Rust" }}
+
 ```rust
 Err(VrError::Timeout(detail)) => {
     // Not a broken session: no sample arrived in time. The sim is
@@ -149,8 +160,10 @@ Err(VrError::Timeout(detail)) => {
 }
 ```
 
-<details>
-<summary>The same in C++ (<code>examples/cpp/ex09_state_paced_loop.cpp</code>)</summary>
+{{#endtab }}
+{{#tab name="C++" }}
+
+`examples/cpp/ex09_state_paced_loop.cpp`:
 
 ```cpp
 try {
@@ -169,10 +182,10 @@ try {
 }
 ```
 
-</details>
+{{#endtab }}
+{{#tab name="Python" }}
 
-<details>
-<summary>The same in Python (<code>examples/python/ex09_state_paced_loop.py</code>)</summary>
+`examples/python/ex09_state_paced_loop.py`:
 
 ```python
 try:
@@ -191,7 +204,8 @@ except vrsdk.VrError as e:
     continue
 ```
 
-</details>
+{{#endtab }}
+{{#endtabs }}
 
 Rust distinguishes the timeout by matching the `VrError::Timeout` variant. C++ and Python
 have one error type each, so they branch on the numeric code and re-raise anything else:
