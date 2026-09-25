@@ -8,7 +8,7 @@ title = "VRobots Book"
 
 [output.html]
 site-url = "/vrobots-book/"
-default-theme = "navy"
+default-theme = "light"
 preferred-dark-theme = "navy"
 additional-css = ["theme/tabs.css", "theme/blueprint.css"]
-additional-js = ["theme/tabs.js"]
+additional-js = ["theme/tabs.js", "theme/blueprint.js"]
